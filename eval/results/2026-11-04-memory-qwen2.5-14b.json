@@ -1,0 +1,211 @@
+{
+  "suite": "memory",
+  "cases": 58,
+  "passed": 54,
+  "accuracy": 0.931,
+  "wrongful_deletions": 0,
+  "by_category": {
+    "add": {
+      "passed": 12,
+      "total": 12
+    },
+    "assistant_only": {
+      "passed": 3,
+      "total": 3
+    },
+    "complement": {
+      "passed": 4,
+      "total": 5
+    },
+    "delete": {
+      "passed": 8,
+      "total": 8
+    },
+    "duplicate": {
+      "passed": 8,
+      "total": 8
+    },
+    "long": {
+      "passed": 1,
+      "total": 2
+    },
+    "nothing": {
+      "passed": 6,
+      "total": 6
+    },
+    "update": {
+      "passed": 12,
+      "total": 14
+    }
+  },
+  "events": {
+    "add": 23,
+    "update": 21,
+    "none": 5,
+    "delete": 5
+  },
+  "add_seconds": {
+    "p50": 6.67,
+    "p95": 11.19,
+    "max": 22.62,
+    "mean": 6.36
+  },
+  "seconds_total": 381.0,
+  "engines": {
+    "embedder": "fastembed:intfloat/multilingual-e5-large",
+    "llm": "ollama:qwen2.5:14b",
+    "store": "qdrant-local"
+  },
+  "wrongful": [],
+  "failures": [
+    {
+      "case": "complement-05",
+      "missing": [
+        "lia"
+      ],
+      "present": [],
+      "too_many": false,
+      "lost": [],
+      "final": [
+        "O usuário tem uma filha chamada Bia que nasceu ontem."
+      ],
+      "decisions": [
+        {
+          "event": "update",
+          "memory_id": "2c3f8a64-1687-4145-aafa-c0c6c22f52c5",
+          "text": "O usuário tem uma filha chamada Bia que nasceu ontem.",
+          "previous_text": "O usuário tem uma filha chamada Lia",
+          "topic": "família",
+          "reason": null
+        }
+      ],
+      "seconds": 8.09
+    },
+    {
+      "case": "update-05",
+      "missing": [
+        "livraria"
+      ],
+      "present": [
+        "padaria"
+      ],
+      "too_many": false,
+      "lost": [],
+      "final": [
+        "O usuário trabalha na Padaria Exemplo"
+      ],
+      "decisions": [],
+      "seconds": 1.7
+    },
+    {
+      "case": "update-09",
+      "missing": [],
+      "present": [
+        "engenharia"
+      ],
+      "too_many": false,
+      "lost": [],
+      "final": [
+        "O usuário deixou de estudar engenharia",
+        "O usuário começou a estudar direito"
+      ],
+      "decisions": [
+        {
+          "event": "update",
+          "memory_id": "89e5918f-09df-49df-91f5-a1b2ed1863eb",
+          "text": "O usuário começou a estudar direito",
+          "previous_text": "O usuário estuda engenharia",
+          "topic": "estudos",
+          "reason": null
+        },
+        {
+          "event": "add",
+          "memory_id": "f4467b89-68ca-49c4-bcf7-e725cf44375d",
+          "text": "O usuário deixou de estudar engenharia",
+          "previous_text": null,
+          "topic": "estudos",
+          "reason": null
+        }
+      ],
+      "seconds": 11.24
+    },
+    {
+      "case": "long-01",
+      "missing": [
+        "professor"
+      ],
+      "present": [],
+      "too_many": false,
+      "lost": [],
+      "final": [
+        "O usuário é casado com um homem chamado Caio",
+        "O usuário faz pilates às terças",
+        "O usuário cuida do seu filho Davi à tarde",
+        "O usuário dá aula de manhã"
+      ],
+      "decisions": [
+        {
+          "event": "add",
+          "memory_id": "e6a8f557-255c-4a89-ba16-a2f569cda4bb",
+          "text": "O usuário é professora",
+          "previous_text": null,
+          "topic": "trabalho",
+          "reason": null
+        },
+        {
+          "event": "update",
+          "memory_id": "e6a8f557-255c-4a89-ba16-a2f569cda4bb",
+          "text": "O usuário dá aula de manhã",
+          "previous_text": "O usuário é professora",
+          "topic": "trabalho",
+          "reason": null
+        },
+        {
+          "event": "add",
+          "memory_id": "65ff8579-3964-487e-b229-97ee050a16a1",
+          "text": "O usuário cuida do seu filho Davi à tarde",
+          "previous_text": null,
+          "topic": "família",
+          "reason": null
+        },
+        {
+          "event": "add",
+          "memory_id": "2cd7cac4-9847-4ff6-bb2d-78c9080e5c9d",
+          "text": "O usuário faz pilates às terças",
+          "previous_text": null,
+          "topic": "saúde",
+          "reason": null
+        },
+        {
+          "event": "add",
+          "memory_id": "b8ca3c37-7016-4294-8bb7-79603c951689",
+          "text": "O usuário é casado com um homem chamado Caio",
+          "previous_text": null,
+          "topic": "família",
+          "reason": null
+        }
+      ],
+      "seconds": 22.62
+    }
+  ],
+  "summary": {
+    "cases": 58,
+    "passed": 54,
+    "accuracy": 0.931,
+    "wrongful_deletions": 0
+  },
+  "decision_search": "dense",
+  "date": "2026-11-04",
+  "pi_memory": "0.1.0",
+  "machine": {
+    "os": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.10",
+    "cpu": "AMD64 Family 25 Model 33 Stepping 2, AuthenticAMD"
+  },
+  "packages": {
+    "fastembed": "0.9.1",
+    "qdrant-client": "1.20.0",
+    "httpx": "0.28.1",
+    "pypdf": "6.21.4"
+  }
+}

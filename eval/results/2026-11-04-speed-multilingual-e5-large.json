@@ -1,0 +1,99 @@
+{
+  "suite": "speed",
+  "embedder": "fastembed:intfloat/multilingual-e5-large",
+  "dimension": 1024,
+  "query_embedding": {
+    "p50": 0.04,
+    "p95": 0.04,
+    "max": 0.05,
+    "mean": 0.04
+  },
+  "results": {
+    "memory · 10000": {
+      "store": "memory",
+      "records": 10000,
+      "search": {
+        "p50": 0.67,
+        "p95": 0.68,
+        "max": 0.7,
+        "mean": 0.66
+      },
+      "load_seconds": 7.0,
+      "bm25_index_seconds": 0.1,
+      "total_p95": 0.72
+    },
+    "qdrant-local · 10000": {
+      "store": "qdrant-local",
+      "records": 10000,
+      "search": {
+        "p50": 0.27,
+        "p95": 0.3,
+        "max": 0.3,
+        "mean": 0.27
+      },
+      "load_seconds": 153.8,
+      "bm25_index_seconds": 0.0,
+      "total_p95": 0.34
+    },
+    "qdrant-local · 50000": {
+      "store": "qdrant-local",
+      "records": 50000,
+      "search": {
+        "p50": 1.36,
+        "p95": 1.39,
+        "max": 1.41,
+        "mean": 1.36
+      },
+      "load_seconds": 781.2,
+      "bm25_index_seconds": 0.0,
+      "total_p95": 1.43
+    },
+    "chroma · 10000": {
+      "store": "chroma",
+      "records": 10000,
+      "search": {
+        "p50": 0.04,
+        "p95": 0.05,
+        "max": 0.05,
+        "mean": 0.04
+      },
+      "load_seconds": 21.9,
+      "bm25_index_seconds": 0.7,
+      "total_p95": 0.09
+    },
+    "chroma · 50000": {
+      "store": "chroma",
+      "records": 50000,
+      "search": {
+        "p50": 0.22,
+        "p95": 0.24,
+        "max": 0.26,
+        "mean": 0.23
+      },
+      "load_seconds": 129.8,
+      "bm25_index_seconds": 4.6,
+      "total_p95": 0.28
+    }
+  },
+  "summary": {
+    "memory · 10000": 0.72,
+    "qdrant-local · 10000": 0.34,
+    "qdrant-local · 50000": 1.43,
+    "chroma · 10000": 0.09,
+    "chroma · 50000": 0.28
+  },
+  "decision_search": "dense",
+  "date": "2026-11-04",
+  "pi_memory": "0.1.0",
+  "machine": {
+    "os": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.10",
+    "cpu": "AMD64 Family 25 Model 33 Stepping 2, AuthenticAMD"
+  },
+  "packages": {
+    "fastembed": "0.9.1",
+    "qdrant-client": "1.20.0",
+    "httpx": "0.28.1",
+    "pypdf": "6.21.4"
+  }
+}

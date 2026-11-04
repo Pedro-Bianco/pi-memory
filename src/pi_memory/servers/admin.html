@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>pi-memory · administração</title>
+<link rel="icon" href="data:,">
+<style>
+  :root {
+    --bg: #f6f6f3; --panel: #ffffff; --text: #1d1d1b; --muted: #6b6b66; --line: #dcdbd4;
+    --accent: #2f6fde; --accent-text: #ffffff; --danger: #c43d2f; --ok: #2e7d4f;
+    --chip: #ecebe6; --shadow: 0 1px 3px rgba(0, 0, 0, .08);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #151514; --panel: #1f1f1d; --text: #ecebe6; --muted: #a3a29b; --line: #34332f;
+      --accent: #7aa7ff; --accent-text: #0d1a33; --danger: #ff7a6b; --ok: #6fd39b;
+      --chip: #2a2a27; --shadow: 0 1px 3px rgba(0, 0, 0, .5);
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--text);
+    font: 14px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  header { background: var(--panel); border-bottom: 1px solid var(--line); padding: 12px 16px;
+    display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; }
+  h1 { font-size: 16px; margin: 0; font-weight: 650; }
+  h1 small { color: var(--muted); font-weight: 400; }
+  h2 { font-size: 15px; margin: 0 0 10px; }
+  h3 { font-size: 13px; margin: 14px 0 8px; color: var(--muted); text-transform: uppercase;
+    letter-spacing: .04em; }
+  .owner { display: flex; gap: 6px; margin-left: auto; align-items: center; min-width: 0; }
+  nav { display: flex; gap: 4px; padding: 8px 16px; background: var(--panel);
+    border-bottom: 1px solid var(--line); overflow-x: auto; }
+  nav button { background: none; border: none; padding: 6px 10px; border-radius: 6px;
+    color: var(--muted); white-space: nowrap; }
+  nav button[aria-selected=true] { background: var(--chip); color: var(--text); font-weight: 600; }
+  main { padding: 16px; max-width: 1100px; margin: 0 auto; }
+  section[hidden] { display: none; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+    padding: 14px 16px; margin-bottom: 14px; box-shadow: var(--shadow); min-width: 0; }
+  .grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+  .kpis { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+  .kpi { background: var(--bg); border-radius: 8px; padding: 10px 12px; border: 1px solid transparent;
+    text-align: left; width: 100%; cursor: pointer; }
+  .kpi:hover, .kpi:focus-visible { border-color: var(--accent); }
+  .rowlink { display: flex; gap: 10px; width: 100%; background: none; border: none; padding: 0;
+    text-align: left; color: inherit; cursor: pointer; align-items: baseline; }
+  .rowlink:hover .body, .rowlink:focus-visible .body { color: var(--accent); text-decoration: underline; }
+  .rowlink .go { color: var(--muted); }
+  .kpi b { display: block; font-size: 22px; }
+  .kpi span { color: var(--muted); }
+  input, textarea, select, button { font: inherit; color: var(--text); }
+  input, textarea, select { background: var(--bg); border: 1px solid var(--line); border-radius: 6px;
+    padding: 6px 10px; min-width: 0; max-width: 100%; }
+  textarea { width: 100%; min-height: 90px; resize: vertical; }
+  button { background: var(--chip); border: 1px solid var(--line); border-radius: 6px;
+    padding: 6px 12px; cursor: pointer; }
+  button:hover { border-color: var(--muted); }
+  button.primary { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+  button.danger { color: var(--danger); }
+  button.link { background: none; border: none; color: var(--accent); padding: 0; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 8px; }
+  .row > input[type=text], .row > input[type=search] { flex: 1 1 200px; }
+  .list { list-style: none; margin: 0; padding: 0; }
+  .list li { border-top: 1px solid var(--line); padding: 8px 0; display: flex; gap: 10px;
+    align-items: flex-start; }
+  .list li:first-child { border-top: none; }
+  .list .body { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+  /* label + value rows: the label never shrinks; a long value wraps on the right */
+  .list .key { flex: 0 0 auto; color: var(--muted); }
+  .list .value { flex: 1; min-width: 0; text-align: right; overflow-wrap: anywhere; }
+  .list .meta { color: var(--muted); font-size: 12px; }
+  .list .actions { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tag { display: inline-block; background: var(--chip); border-radius: 999px; padding: 0 8px;
+    font-size: 12px; margin-right: 6px; }
+  .muted { color: var(--muted); }
+  .cols { display: grid; gap: 14px; grid-template-columns: minmax(200px, 280px) 1fr; }
+  .collection { width: 100%; text-align: left; margin-bottom: 6px; display: flex;
+    justify-content: space-between; gap: 8px; }
+  .collection[aria-pressed=true] { border-color: var(--accent); }
+  #toast { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
+    background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
+    padding: 10px 14px; box-shadow: var(--shadow); max-width: calc(100% - 32px); display: none; }
+  #toast.show { display: block; }
+  #toast.error { border-color: var(--danger); color: var(--danger); }
+  iframe.mini { height: 460px; }
+  iframe { width: 100%; height: 70vh; border: 1px solid var(--line); border-radius: 10px;
+    background: var(--panel); }
+  .decision-add { color: var(--ok); } .decision-delete { color: var(--danger); }
+  @media (max-width: 700px) {
+    .cols { grid-template-columns: 1fr; }
+    .owner { width: 100%; margin-left: 0; }
+    .owner input { flex: 1; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>pi-memory <small>administração local</small></h1>
+  <form class="owner" id="owner-form">
+    <label for="owner">Dono</label>
+    <input id="owner" type="text" placeholder="ex. ana" autocomplete="off" required>
+    <input id="token" type="password" placeholder="token (se houver)" autocomplete="off"
+      aria-label="Token do servidor" hidden>
+    <button class="primary" type="submit">Abrir</button>
+  </form>
+</header>
+<nav role="tablist" aria-label="Seções">
+  <button role="tab" data-tab="overview" aria-selected="true">Visão geral</button>
+  <button role="tab" data-tab="memories" aria-selected="false">Memórias</button>
+  <button role="tab" data-tab="kb" aria-selected="false">Base de conhecimento</button>
+  <button role="tab" data-tab="search" aria-selected="false">Busca</button>
+  <button role="tab" data-tab="graph" aria-selected="false">Grafo</button>
+</nav>
+<main>
+  <p id="no-owner" class="card muted">Informe o dono (owner) acima para ver e administrar os dados dele.</p>
+
+  <section id="tab-overview" role="tabpanel">
+    <div class="card"><h2>Visão geral</h2><div class="kpis" id="kpis"></div></div>
+    <div class="grid">
+      <div class="card"><h3>Memórias por assunto</h3><ul class="list" id="by-topic"></ul></div>
+      <div class="card"><h3>Coleções</h3><ul class="list" id="overview-collections"></ul></div>
+      <div class="card"><h3>Motores em uso</h3><ul class="list" id="engines"></ul></div>
+    </div>
+    <div class="card">
+      <div class="row"><h2 style="margin:0">Grafo</h2>
+        <span class="muted">memórias por assunto e base de conhecimento por coleção</span>
+        <button type="button" id="overview-graph-open" style="margin-left:auto">Abrir com mais opções</button></div>
+      <iframe id="overview-graph" class="mini" title="Grafo da memória e da base de conhecimento"></iframe>
+    </div>
+  </section>
+
+  <section id="tab-memories" role="tabpanel" hidden>
+    <div class="grid">
+      <form class="card" id="remember-form">
+        <h2>Nova memória</h2>
+        <div class="row"><input id="remember-text" type="text" placeholder="O usuário ..." required></div>
+        <div class="row">
+          <input id="remember-topic" type="text" placeholder="assunto (opcional)" list="topics">
+          <button class="primary" type="submit">Guardar</button>
+        </div>
+      </form>
+      <form class="card" id="learn-form">
+        <h2>Aprender de uma conversa</h2>
+        <textarea id="learn-text" placeholder="Cole a fala do usuário. O modelo extrai os fatos e decide guardar, substituir, apagar ou ignorar."></textarea>
+        <div class="row"><button class="primary" type="submit">Processar</button><span class="muted" id="learn-status"></span></div>
+        <ul class="list" id="learn-result"></ul>
+      </form>
+    </div>
+    <div class="card">
+      <div class="row">
+        <h2 style="margin:0">Memórias</h2>
+        <select id="memory-topic" aria-label="Filtrar por assunto"><option value="">todos os assuntos</option></select>
+        <span class="muted" id="memory-count"></span>
+        <button class="danger" type="button" id="delete-all" style="margin-left:auto">Apagar todas</button>
+      </div>
+      <ul class="list" id="memory-list"></ul>
+      <div class="row"><button type="button" id="memory-more" hidden>Carregar mais</button></div>
+    </div>
+  </section>
+
+  <section id="tab-kb" role="tabpanel" hidden>
+    <div class="cols">
+      <div>
+        <div class="card">
+          <h2>Coleções</h2>
+          <div id="collection-list"></div>
+          <p class="muted" id="collection-empty" hidden>Nenhuma coleção ainda.</p>
+        </div>
+      </div>
+      <div>
+        <div class="grid">
+          <form class="card" id="upload-form">
+            <h2>Enviar arquivos</h2>
+            <div class="row"><input id="upload-files" type="file" multiple required
+              accept=".pdf,.docx,.xlsx,.csv,.pptx,.txt,.md"></div>
+            <div class="row">
+              <input id="upload-collection" type="text" placeholder="coleção (padrão: geral)" list="collections">
+              <button class="primary" type="submit">Enviar</button>
+            </div>
+            <ul class="list" id="upload-result"></ul>
+          </form>
+          <form class="card" id="text-form">
+            <h2>Criar documento</h2>
+            <div class="row"><input id="text-title" type="text" placeholder="título" required></div>
+            <textarea id="text-body" placeholder="Texto do documento (Markdown aceito)" required></textarea>
+            <div class="row">
+              <input id="text-collection" type="text" placeholder="coleção (padrão: geral)" list="collections">
+              <button class="primary" type="submit">Criar</button>
+            </div>
+          </form>
+        </div>
+        <div class="card">
+          <div class="row"><h2 style="margin:0" id="documents-title">Documentos</h2></div>
+          <ul class="list" id="document-list"></ul>
+        </div>
+        <div class="card" id="chunks-card" hidden>
+          <div class="row"><h2 style="margin:0" id="chunks-title">Trechos</h2>
+            <button type="button" id="chunks-close" style="margin-left:auto">Fechar</button></div>
+          <ul class="list" id="chunk-list"></ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="tab-search" role="tabpanel" hidden>
+    <form class="card" id="search-form">
+      <h2>Busca</h2>
+      <div class="row">
+        <input id="search-query" type="search" placeholder="pergunta ou termo exato (ex. NF-4521)" required>
+        <select id="search-where" aria-label="Onde buscar">
+          <option value="both">memórias e documentos</option>
+          <option value="memories">só memórias</option>
+          <option value="documents">só documentos</option>
+        </select>
+        <input id="search-collection" type="text" placeholder="coleção (todas)" list="collections">
+        <button class="primary" type="submit">Buscar</button>
+      </div>
+    </form>
+    <div class="grid">
+      <div class="card"><h3>Memórias</h3><ul class="list" id="search-memories"></ul></div>
+      <div class="card"><h3>Documentos</h3><ul class="list" id="search-documents"></ul></div>
+    </div>
+  </section>
+
+  <section id="tab-graph" role="tabpanel" hidden>
+    <div class="card">
+      <div class="row">
+        <h2 style="margin:0">Grafo</h2>
+        <label><input type="checkbox" id="graph-docs" checked> base de conhecimento</label>
+        <label><input type="checkbox" id="graph-chunks"> trechos</label>
+        <button type="button" id="graph-refresh">Atualizar</button>
+      </div>
+      <iframe id="graph-frame" title="Grafo da memória"></iframe>
+    </div>
+  </section>
+</main>
+<datalist id="topics"></datalist>
+<datalist id="collections"></datalist>
+<div id="toast" role="status"></div>
+<script>
+(function () {
+  "use strict";
+  const $ = (id) => document.getElementById(id);
+  const el = (tag, props = {}, ...children) => {
+    const node = document.createElement(tag);
+    for (const [k, v] of Object.entries(props)) {
+      if (k === "class") node.className = v; else if (k.startsWith("on")) node.addEventListener(k.slice(2), v);
+      else node[k] = v;
+    }
+    node.append(...children.filter((c) => c !== null && c !== undefined));
+    return node;
+  };
+  const state = { owner: "", tab: "overview", collection: null, memoryOffset: 0, token: "",
+                  memoryTopic: "" };
+  try { state.token = sessionStorage.getItem("pi-memory-token") || ""; } catch (e) { /* optional */ }
+  const PAGE = 50;
+
+  function toast(message, error = false) {
+    const t = $("toast");
+    t.textContent = message; t.className = "show" + (error ? " error" : "");
+    clearTimeout(toast.timer); toast.timer = setTimeout(() => (t.className = ""), error ? 7000 : 3000);
+  }
+
+  // Every action is one operation of the same table the CLI, HTTP and MCP use.
+  async function call(operation, params) {
+    const headers = { "Content-Type": "application/json" };
+    if (state.token) headers.Authorization = "Bearer " + state.token;
+    const response = await fetch("/v1/" + operation, {
+      method: "POST", headers, body: JSON.stringify({ owner: state.owner, ...params }),
+    });
+    const data = await response.json();
+    if (response.status === 401) {          // the server was started with a token
+      $("token").hidden = false; $("token").focus();
+      throw new Error("Este servidor exige token: informe-o ao lado do dono e clique em Abrir.");
+    }
+    if (data.error) throw new Error(data.error.message);
+    return data;
+  }
+  async function attempt(fn) {
+    try { return await fn(); } catch (e) { toast(e.message, true); return null; }
+  }
+  function confirmTyping(what, expected) {
+    const typed = window.prompt(`Isto apaga ${what} e não pode ser desfeito.\nDigite "${expected}" para confirmar:`);
+    return typed !== null && typed.trim() === expected;
+  }
+  function empty(list, text) { list.replaceChildren(el("li", { class: "muted" }, text)); }
+  const date = (iso) => (iso ? new Date(iso).toLocaleString("pt-BR") : "");
+
+  // ── owner and tabs ────────────────────────────────────────────────────────────────────
+  function setOwner(owner) {
+    state.owner = owner.trim();
+    try { localStorage.setItem("pi-memory-owner", state.owner); } catch (e) { /* optional */ }
+    $("no-owner").hidden = !!state.owner;
+    document.querySelectorAll("section").forEach((s) => (s.hidden = !state.owner || s.id !== "tab-" + state.tab));
+    if (state.owner) refresh();
+  }
+  function setTab(tab) {
+    state.tab = tab;
+    history.replaceState(null, "", "#" + tab);
+    document.querySelectorAll("nav button").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.tab === tab)));
+    document.querySelectorAll("section").forEach((s) => (s.hidden = !state.owner || s.id !== "tab-" + tab));
+    if (state.owner) refresh();
+  }
+  function refresh() {
+    ({ overview: loadOverview, memories: () => loadMemories(true), kb: loadKnowledgeBase,
+       search: () => {}, graph: loadGraph })[state.tab]();
+  }
+  $("owner-form").addEventListener("submit", (ev) => {
+    ev.preventDefault();
+    if (!$("token").hidden) {
+      state.token = $("token").value.trim();
+      try { sessionStorage.setItem("pi-memory-token", state.token); } catch (e) { /* optional */ }
+    }
+    setOwner($("owner").value);
+  });
+  document.querySelectorAll("nav button").forEach((b) => b.addEventListener("click", () => setTab(b.dataset.tab)));
+
+  // ── overview ──────────────────────────────────────────────────────────────────────────
+  async function loadOverview() {
+    const s = await attempt(() => call("stats", {}));
+    if (!s) return;
+    const openMemories = (topic) => { state.memoryTopic = topic; setTab("memories"); };
+    const openCollection = (name) => { state.collection = name; setTab("kb"); };
+    const kpi = (value, label, open) => el("button", { type: "button", class: "kpi", onclick: open,
+      title: `ver ${label}` }, el("b", {}, String(value)), el("span", {}, label));
+    $("kpis").replaceChildren(kpi(s.memories.total, "memórias", () => openMemories("")),
+      kpi(s.collections.length, "coleções", () => openCollection(null)),
+      kpi(s.documents, "documentos", () => openCollection(null)),
+      kpi(s.chunks, "trechos", () => openCollection(null)));
+    const link = (label, detail, open, title) => el("li", {}, el("button", { type: "button",
+      class: "rowlink", onclick: open, title }, el("span", { class: "body" }, label), detail,
+      el("span", { class: "go", "aria-hidden": "true" }, "›")));
+    const topics = Object.entries(s.memories.by_topic);
+    topics.length ? $("by-topic").replaceChildren(...topics.map(([t, n]) => link(t, el("b", {}, String(n)),
+      () => openMemories(t), `ver as memórias de ${t}`)))
+                  : empty($("by-topic"), "Nenhuma memória ainda.");
+    s.collections.length ? $("overview-collections").replaceChildren(...s.collections.map((c) =>
+      link(c.name, el("span", { class: "muted" }, `${c.documents} doc. · ${c.chunks} trechos`),
+        () => openCollection(c.name), `abrir a coleção ${c.name}`)))
+      : empty($("overview-collections"), "Nenhuma coleção ainda.");
+    const e = s.engines;
+    const row = (key, value) => el("li", {}, el("span", { class: "key" }, key), el("span", { class: "value" }, value));
+    $("engines").replaceChildren(row("embedding", `${e.embedder} (${e.dimension} dim.)`),
+      row("banco", e.store), row("modelo de linguagem", String(e.llm)));
+    $("topics").replaceChildren(...Object.keys(s.memories.by_topic).map((t) => el("option", { value: t })));
+    const graph = await attempt(() => call("graph.html", { include_documents: true }));
+    if (graph) $("overview-graph").srcdoc = graph.html;
+    $("collections").replaceChildren(...s.collections.map((c) => el("option", { value: c.name })));
+  }
+
+  // ── memories ──────────────────────────────────────────────────────────────────────────
+  async function loadMemories(reset) {
+    if (reset) { state.memoryOffset = 0; $("memory-list").replaceChildren(); }
+    const topic = state.memoryTopic || undefined;
+    const r = await attempt(() => call("memories.list", { topic, limit: PAGE, offset: state.memoryOffset }));
+    if (!r) return;
+    $("memory-count").textContent = `${r.total} no total`;
+    if (!r.total) empty($("memory-list"), "Nenhuma memória.");
+    $("memory-list").append(...r.memories.map(memoryItem));
+    state.memoryOffset += r.memories.length;
+    $("memory-more").hidden = state.memoryOffset >= r.total;
+    const s = await attempt(() => call("stats", {}));
+    if (s) {
+      const current = state.memoryTopic;
+      $("memory-topic").replaceChildren(el("option", { value: "" }, "todos os assuntos"),
+        ...Object.keys(s.memories.by_topic).map((t) => el("option", { value: t, selected: t === current }, t)));
+    }
+  }
+  function memoryItem(m) {
+    const body = el("div", { class: "body" }, el("div", {}, el("span", { class: "tag" }, m.topic), m.text),
+      el("div", { class: "meta" }, `atualizada ${date(m.updated_at)} · ${m.id}`));
+    const edit = el("button", { type: "button", onclick: async () => {
+      const text = window.prompt("Novo texto da memória:", m.text);
+      if (text === null || !text.trim() || text === m.text) return;
+      const updated = await attempt(() => call("memories.update", { memory_id: m.id, text }));
+      if (updated) { toast("Memória atualizada."); loadMemories(true); }
+    } }, "Editar");
+    const remove = el("button", { type: "button", class: "danger", onclick: async () => {
+      if (!window.confirm(`Apagar esta memória?\n\n${m.text}`)) return;
+      if (await attempt(() => call("memories.delete", { memory_id: m.id }))) { toast("Memória apagada."); loadMemories(true); }
+    } }, "Apagar");
+    return el("li", {}, body, el("div", { class: "actions" }, edit, remove));
+  }
+  $("memory-topic").addEventListener("change", () => { state.memoryTopic = $("memory-topic").value; loadMemories(true); });
+  $("memory-more").addEventListener("click", () => loadMemories(false));
+  $("remember-form").addEventListener("submit", async (ev) => {
+    ev.preventDefault();
+    const topic = $("remember-topic").value.trim() || undefined;
+    if (await attempt(() => call("memories.remember", { text: $("remember-text").value, topic }))) {
+      $("remember-text").value = ""; toast("Memória guardada."); loadMemories(true);
+    }
+  });
+  $("learn-form").addEventListener("submit", async (ev) => {
+    ev.preventDefault();
+    $("learn-status").textContent = "processando (o modelo de linguagem pode levar alguns segundos)…";
+    const r = await attempt(() => call("memories.add", { messages: $("learn-text").value }));
+    $("learn-status").textContent = "";
+    if (!r) return;
+    r.decisions.length ? $("learn-result").replaceChildren(...r.decisions.map((d) => el("li", {},
+      el("div", { class: "body" }, el("b", { class: "decision-" + d.event }, d.event + " "), d.text,
+        d.previous_text ? el("div", { class: "meta" }, "antes: " + d.previous_text) : null,
+        d.reason ? el("div", { class: "meta" }, "recuo de segurança: " + d.reason) : null))))
+      : empty($("learn-result"), "Nada a guardar nesta conversa.");
+    loadMemories(true);
+  });
+  $("delete-all").addEventListener("click", async () => {
+    if (!confirmTyping(`TODAS as memórias de "${state.owner}"`, state.owner)) return;
+    const r = await attempt(() => call("memories.delete_all", {}));
+    if (r) { toast(`${r.deleted} memória(s) apagada(s).`); loadMemories(true); }
+  });
+
+  // ── knowledge base ────────────────────────────────────────────────────────────────────
+  async function loadKnowledgeBase() {
+    const r = await attempt(() => call("collections.list", {}));
+    if (!r) return;
+    $("collections").replaceChildren(...r.collections.map((c) => el("option", { value: c.name })));
+    $("collection-empty").hidden = r.collections.length > 0;
+    if (state.collection && !r.collections.some((c) => c.name === state.collection)) state.collection = null;
+    const all = el("button", { type: "button", class: "collection", "aria-pressed": String(!state.collection),
+      onclick: () => { state.collection = null; loadKnowledgeBase(); } }, el("span", {}, "todas"));
+    all.setAttribute("aria-pressed", String(!state.collection));
+    $("collection-list").replaceChildren(all, ...r.collections.map((c) => {
+      const pick = el("button", { type: "button", class: "collection",
+        onclick: () => { state.collection = c.name; loadKnowledgeBase(); } },
+        el("span", {}, c.name), el("span", { class: "muted" }, `${c.documents} · ${c.chunks}`));
+      pick.setAttribute("aria-pressed", String(state.collection === c.name));
+      const remove = el("button", { type: "button", class: "link", onclick: async () => {
+        if (!confirmTyping(`a coleção "${c.name}" inteira (${c.documents} documentos, ${c.chunks} trechos)`, c.name)) return;
+        const d = await attempt(() => call("collections.delete", { name: c.name }));
+        if (d) { toast(`Coleção apagada: ${d.deleted_documents} documento(s).`); state.collection = null; loadKnowledgeBase(); }
+      } }, "apagar coleção");
+      return el("div", {}, pick, state.collection === c.name ? remove : null);
+    }));
+    await loadDocuments();
+  }
+  async function loadDocuments() {
+    const r = await attempt(() => call("documents.list", { collection: state.collection || undefined }));
+    if (!r) return;
+    $("documents-title").textContent = state.collection ? `Documentos em “${state.collection}”` : "Documentos";
+    r.documents.length ? $("document-list").replaceChildren(...r.documents.map(documentItem))
+                       : empty($("document-list"), "Nenhum documento.");
+  }
+  function documentItem(d) {
+    const body = el("div", { class: "body" }, el("div", {}, el("span", { class: "tag" }, d.collection), d.source),
+      el("div", { class: "meta" }, `${d.format} · ${d.chunks} trecho(s) · ${date(d.added_at)}`));
+    const open = el("button", { type: "button", onclick: () => openDocument(d.id) }, "Trechos");
+    const remove = el("button", { type: "button", class: "danger", onclick: async () => {
+      if (!window.confirm(`Apagar o documento "${d.source}" e seus ${d.chunks} trechos?`)) return;
+      if (await attempt(() => call("documents.remove", { doc_id: d.id }))) {
+        toast("Documento apagado."); $("chunks-card").hidden = true; loadKnowledgeBase();
+      }
+    } }, "Apagar");
+    return el("li", {}, body, el("div", { class: "actions" }, open, remove));
+  }
+  async function openDocument(docId) {
+    const r = await attempt(() => call("documents.get", { doc_id: docId }));
+    if (!r) { $("chunks-card").hidden = true; return; }
+    $("chunks-card").hidden = false;
+    $("chunks-title").textContent = `Trechos de ${r.document.source} (${r.chunks.length})`;
+    $("chunk-list").replaceChildren(...r.chunks.map((c) => el("li", {},
+      el("div", { class: "body" }, el("div", { class: "meta" }, `${c.location} · #${c.index}`), c.text),
+      el("div", { class: "actions" }, el("button", { type: "button", class: "danger", onclick: async () => {
+        if (!window.confirm(`Apagar este trecho (${c.location})?`)) return;
+        if (await attempt(() => call("chunks.delete", { chunk_id: c.id }))) {
+          toast("Trecho apagado."); await loadKnowledgeBase();
+          if (r.chunks.length > 1) openDocument(docId); else $("chunks-card").hidden = true;
+        }
+      } }, "Apagar")))));
+    $("chunks-card").scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+  $("chunks-close").addEventListener("click", () => ($("chunks-card").hidden = true));
+  const toBase64 = (file) => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result).split(",", 2)[1] || "");
+    reader.onerror = () => reject(new Error(`Não consegui ler ${file.name}`));
+    reader.readAsDataURL(file);
+  });
+  $("upload-form").addEventListener("submit", async (ev) => {
+    ev.preventDefault();
+    const collection = $("upload-collection").value.trim() || undefined;
+    const results = $("upload-result"); results.replaceChildren();
+    for (const file of $("upload-files").files) {
+      const line = el("li", {}, el("span", { class: "body" }, `${file.name}: enviando…`));
+      results.append(line);
+      try {
+        const r = await call("documents.add", { filename: file.name, content_base64: await toBase64(file), collection });
+        line.firstChild.textContent = `${file.name}: ${r.status} (${r.document.chunks} trechos em “${r.document.collection}”)`;
+      } catch (e) { line.firstChild.textContent = `${file.name}: ${e.message}`; line.classList.add("decision-delete"); }
+    }
+    $("upload-files").value = "";
+    loadKnowledgeBase();
+  });
+  $("text-form").addEventListener("submit", async (ev) => {
+    ev.preventDefault();
+    const r = await attempt(() => call("documents.add_text", { title: $("text-title").value,
+      text: $("text-body").value, collection: $("text-collection").value.trim() || undefined }));
+    if (r) { toast(`Documento ${r.status}: ${r.document.source}`); $("text-title").value = ""; $("text-body").value = ""; loadKnowledgeBase(); }
+  });
+
+  // ── search ────────────────────────────────────────────────────────────────────────────
+  $("search-form").addEventListener("submit", async (ev) => {
+    ev.preventDefault();
+    const query = $("search-query").value, where = $("search-where").value;
+    const collection = $("search-collection").value.trim() || undefined;
+    const memories = where !== "documents" ? await attempt(() => call("memories.search", { query, limit: 5 })) : null;
+    const documents = where !== "memories" ? await attempt(() => call("documents.search", { query, limit: 5, collection })) : null;
+    const show = (list, r, render) => (!r ? empty(list, "—") : r.results.length
+      ? list.replaceChildren(...r.results.map(render)) : empty(list, "Nenhum resultado."));
+    show($("search-memories"), memories, (m) => el("li", {}, el("div", { class: "body" },
+      el("span", { class: "tag" }, m.memory.topic), m.text), el("span", { class: "muted" }, m.score.toFixed(3))));
+    show($("search-documents"), documents, (t) => el("li", {}, el("div", { class: "body" },
+      el("div", { class: "meta" }, t.citation.label), t.text), el("span", { class: "muted" }, t.score.toFixed(3))));
+  });
+
+  // ── graph ─────────────────────────────────────────────────────────────────────────────
+  async function loadGraph() {
+    const r = await attempt(() => call("graph.html", {
+      include_documents: $("graph-docs").checked, include_chunks: $("graph-chunks").checked }));
+    if (r) $("graph-frame").srcdoc = r.html;
+  }
+  $("graph-refresh").addEventListener("click", loadGraph);
+  $("overview-graph-open").addEventListener("click", () => setTab("graph"));
+  $("graph-docs").addEventListener("change", loadGraph);
+  $("graph-chunks").addEventListener("change", loadGraph);
+
+  // ── start ─────────────────────────────────────────────────────────────────────────────
+  let saved = "";
+  try { saved = localStorage.getItem("pi-memory-owner") || ""; } catch (e) { /* optional */ }
+  const fromUrl = new URLSearchParams(location.search).get("owner");
+  $("owner").value = fromUrl || saved;
+  if (state.token) { $("token").hidden = false; $("token").value = state.token; }
+  const tab = location.hash.slice(1);
+  if (["overview", "memories", "kb", "search", "graph"].includes(tab)) state.tab = tab;
+  document.querySelectorAll("nav button").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.tab === state.tab)));
+  setOwner($("owner").value);
+})();
+</script>
+</body>
+</html>

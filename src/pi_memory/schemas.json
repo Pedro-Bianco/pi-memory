@@ -1,0 +1,918 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pi-memory/schemas/v1",
+  "title": "pi-memory JSON v1",
+  "$defs": {
+    "Owner": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "Metadata": {
+      "type": "object",
+      "additionalProperties": {
+        "type": [
+          "string",
+          "number",
+          "boolean"
+        ]
+      }
+    },
+    "Filters": {
+      "type": "object",
+      "additionalProperties": {
+        "type": [
+          "string",
+          "number",
+          "boolean"
+        ]
+      }
+    },
+    "Message": {
+      "type": "object",
+      "required": [
+        "role",
+        "content"
+      ],
+      "properties": {
+        "role": {
+          "enum": [
+            "user",
+            "assistant"
+          ]
+        },
+        "content": {
+          "type": "string"
+        }
+      }
+    },
+    "Memory": {
+      "type": "object",
+      "required": [
+        "id",
+        "text",
+        "owner",
+        "topic",
+        "created_at",
+        "updated_at",
+        "metadata"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "owner": {
+          "$ref": "#/$defs/Owner"
+        },
+        "topic": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "metadata": {
+          "$ref": "#/$defs/Metadata"
+        }
+      }
+    },
+    "Decision": {
+      "type": "object",
+      "required": [
+        "event",
+        "memory_id",
+        "text",
+        "previous_text",
+        "topic",
+        "reason"
+      ],
+      "properties": {
+        "event": {
+          "enum": [
+            "add",
+            "update",
+            "delete",
+            "none"
+          ]
+        },
+        "memory_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "text": {
+          "type": "string"
+        },
+        "previous_text": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "topic": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "reason": {
+          "enum": [
+            null,
+            "fallback_unclear",
+            "fallback_target_missing",
+            "fallback_engine_error"
+          ]
+        }
+      }
+    },
+    "Document": {
+      "type": "object",
+      "required": [
+        "id",
+        "owner",
+        "source",
+        "format",
+        "content_hash",
+        "chunks",
+        "added_at",
+        "metadata",
+        "collection"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "owner": {
+          "$ref": "#/$defs/Owner"
+        },
+        "source": {
+          "type": "string"
+        },
+        "format": {
+          "type": "string"
+        },
+        "content_hash": {
+          "type": "string"
+        },
+        "chunks": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "added_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "metadata": {
+          "$ref": "#/$defs/Metadata"
+        },
+        "collection": {
+          "$ref": "#/$defs/Collection"
+        }
+      }
+    },
+    "Citation": {
+      "type": "object",
+      "required": [
+        "doc_id",
+        "source",
+        "location",
+        "label"
+      ],
+      "properties": {
+        "doc_id": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "location": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "collection": {
+          "$ref": "#/$defs/Collection"
+        }
+      }
+    },
+    "SearchResult": {
+      "type": "object",
+      "required": [
+        "kind",
+        "id",
+        "text",
+        "score"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "memory",
+            "chunk"
+          ]
+        },
+        "id": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "score": {
+          "type": "number"
+        },
+        "memory": {
+          "$ref": "#/$defs/Memory"
+        },
+        "citation": {
+          "$ref": "#/$defs/Citation"
+        }
+      }
+    },
+    "GraphNode": {
+      "type": "object",
+      "required": [
+        "id",
+        "kind",
+        "label",
+        "topic"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "topic",
+            "memory",
+            "collection",
+            "document",
+            "chunk"
+          ]
+        },
+        "label": {
+          "type": "string"
+        },
+        "topic": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        }
+      }
+    },
+    "GraphEdge": {
+      "type": "object",
+      "required": [
+        "source",
+        "target",
+        "kind"
+      ],
+      "properties": {
+        "source": {
+          "type": "string"
+        },
+        "target": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "belongs",
+            "similar",
+            "contains"
+          ]
+        },
+        "weight": {
+          "type": "number"
+        }
+      }
+    },
+    "Graph": {
+      "type": "object",
+      "required": [
+        "owner",
+        "nodes",
+        "edges",
+        "generated_at"
+      ],
+      "properties": {
+        "owner": {
+          "$ref": "#/$defs/Owner"
+        },
+        "nodes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/GraphNode"
+          }
+        },
+        "edges": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/GraphEdge"
+          }
+        },
+        "generated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "Error": {
+      "type": "object",
+      "required": [
+        "error"
+      ],
+      "properties": {
+        "error": {
+          "type": "object",
+          "required": [
+            "code",
+            "message"
+          ],
+          "properties": {
+            "code": {
+              "enum": [
+                "invalid_input",
+                "not_found",
+                "engine_unavailable",
+                "engine_timeout",
+                "engine_auth",
+                "engine_response",
+                "embedder_mismatch",
+                "store_busy",
+                "unsupported_format",
+                "no_text",
+                "unreadable_document",
+                "missing_extra",
+                "unauthorized",
+                "internal"
+              ]
+            },
+            "message": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "operations": {
+      "memories.add": {
+        "type": "object",
+        "required": [
+          "messages",
+          "owner"
+        ],
+        "properties": {
+          "messages": {
+            "oneOf": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "$ref": "#/$defs/Message"
+                }
+              }
+            ],
+            "description": "A conversa: um texto, ou uma lista de mensagens {\"role\": \"user\" ou \"assistant\", \"content\": \"...\"}. Só fatos ditos pelo usuário viram memória."
+          },
+          "owner": {
+            "$ref": "#/$defs/Owner",
+            "description": "Dono dos dados (ex.: o id do usuário no seu sistema). Cada dono só vê os próprios dados; o valor é comparado exatamente como escrito."
+          },
+          "metadata": {
+            "$ref": "#/$defs/Metadata",
+            "description": "Dados extras seus, guardados junto (objeto com texto, número ou sim/não)."
+          }
+        }
+      },
+      "memories.remember": {
+        "type": "object",
+        "required": [
+          "text",
+          "owner"
+        ],
+        "properties": {
+          "text": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000,
+            "description": "O fato a guardar, em uma frase, ex. \"O usuário tem uma gata chamada Mel\"."
+          },
+          "owner": {
+            "$ref": "#/$defs/Owner",
+            "description": "Dono dos dados (ex.: o id do usuário no seu sistema). Cada dono só vê os próprios dados; o valor é comparado exatamente como escrito."
+          },
+          "topic": {
+            "type": "string",
+            "description": "Assunto da memória, da lista configurada (padrão: perfil, família, trabalho, saúde, rotina, lazer, animais, casa, finanças, estudos, outros); sem ele, fica em \"outros\"."
+          },
+          "metadata": {
+            "$ref": "#/$defs/Metadata",
+            "description": "Dados extras seus, guardados junto (objeto com texto, número ou sim/não)."
+          }
+        }
+      },
+      "memories.search": {
+        "type": "object",
+        "required": [
+          "query",
+          "owner"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "minLength": 1,
+            "description": "O que procurar, em linguagem natural; códigos e nomes exatos também funcionam."
+          },
+          "owner": {
+            "$ref": "#/$defs/Owner",
+            "description": "Dono dos dados (ex.: o id do usuário no seu sistema). Cada dono só vê os próprios dados; o valor é comparado exatamente como escrito."
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 3,
+            "description": "Quantas memórias devolver; use as 3 primeiras como contexto."
+          },
+          "filters": {
+            "$ref": "#/$defs/Filters",
+            "description": "Só resultados cujos metadados tenham estes valores exatos, ex. {\"projeto\": \"x\"}."
+          }
+        }
+      },
+      "memories.get": {
+        "type": "object",
+        "required": [
+          "memory_id",
+          "owner"
+        ],
+        "properties": {
+          "memory_id": {
+            "type": "string",
+            "description": "Id da memória (campo id devolvido por list, search ou add)."
+          },
+          "owner": {
+            "$ref": "#/$defs/Owner",
+            "description": "Dono dos dados (ex.: o id do usuário no seu sistema). Cada dono só vê os próprios dados; o valor é comparado exatamente como escrito."
+          }
+        }
+      },
+      "memories.list": {
+        "type": "object",
+        "required": [
+          "owner"
+        ],
+        "properties": {
+          "owner": {
+            "$ref": "#/$defs/Owner",
+            "description": "Dono dos dados (ex.: o id do usuário no seu sistema). Cada dono só vê os próprios dados; o valor é comparado exatamente como escrito."
+          },
+          "topic": {
+            "type": "string",
+            "description": "Só as memórias deste assunto."
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000,
+            "default": 100,
+            "description": "Quantas memórias devolver nesta página."
+          },
+          "offset": {
+            "type": "integer",
+            "minimum": 0,
+            "default": 0,
+            "description": "Quantos itens pular (paginação)."
+          }
+        }
+      },
+      "memories.update": {
+        "type": "object",
+        "required": [
+          "memory_id",
+          "owner"
+        ],
+        "properties": {
+          "memory_id": {
+            "type": "string",
+            "description": "Id da memória (campo id devolvido por list, search ou add)."
+          },
+          "owner": {
+            "$ref": "#/$defs/Owner",
+            "description": "Dono dos dados (ex.: o id do usuário no seu sistema). Cada dono só vê os próprios dados; o valor é comparado exatamente como escrito."
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000,
+            "description": "Novo texto da memória (opcional)."
+          },
+          "topic": {
+            "type": "string",
+            "description": "Novo assunto, da lista configurada (opcional)."
+          },
+          "metadata": {
+            "$ref": "#/$defs/Metadata",
+            "description": "Dados extras seus, guardados junto (objeto com texto, número ou sim/não)."
+          }
+        }
+      },
+      "memories.delete": {
+        "type": "object",
+        "required": [
+          "memory_id",
+          "owner"
+        ],
+        "properties": {
+          "memory_id": {
+            "type": "string",
+            "description": "Id da memória (campo id devolvido por list, search ou add)."
+          },
+          "owner": {
+            "$ref": "#/$defs/Owner",
+            "description": "Dono dos dados (ex.: o id do usuário no seu sistema). Cada dono só vê os próprios dados; o valor é comparado exatamente como escrito."
+          }
+        }
+      },
+      "memories.delete_all": {
+        "type": "object",
+        "required": [
+          "owner"
+        ],
+        "properties": {
+          "owner": {
+            "$ref": "#/$defs/Owner",
+            "description": "Dono dos dados (ex.: o id do usuário no seu sistema). Cada dono só vê os próprios dados; o valor é comparado exatamente como escrito."
+          }
+        }
+      },
+      "documents.add": {
+        "type": "object",
+        "required": [
+          "owner"
+        ],
+        "properties": {
+          "owner": {
+            "$ref": "#/$defs/Owner",
+            "description": "Dono dos dados (ex.: o id do usuário no seu sistema). Cada dono só vê os próprios dados; o valor é comparado exatamente como escrito."
+          },
+          "path": {
+            "type": "string",
+            "description": "Caminho de um arquivo (PDF, .docx, .xlsx, .csv, .pptx, .txt, .md). Pelo HTTP e MCP só funciona dentro da pasta liberada com --docs-dir; senão use filename + content_base64."
+          },
+          "filename": {
+            "type": "string",
+            "description": "Nome do arquivo com a extensão, ex. \"contrato.pdf\" (usado com content_base64)."
+          },
+          "content_base64": {
+            "type": "string",
+            "description": "Conteúdo do arquivo em base64 (usado com filename)."
+          },
+          "metadata": {
+            "$ref": "#/$defs/Metadata",
+            "description": "Dados extras seus, guardados junto (objeto com texto, número ou sim/não)."
+          },
+          "collection": {
+            "$ref": "#/$defs/Collection",
+            "description": "Coleção onde guardar (padrão: \"geral\")."
+          }
+        },
+        "oneOf": [
+          {
+            "required": [
+              "path"
+            ]
+          },
+          {
+            "required": [
+              "filename",
+              "content_base64"
+            ]
+          }
+        ]
+      },
+      "documents.search": {
+        "type": "object",
+        "required": [
+          "query",
+          "owner"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "minLength": 1,
+            "description": "O que procurar, em linguagem natural; códigos e nomes exatos também funcionam."
+          },
+          "owner": {
+            "$ref": "#/$defs/Owner",
+            "description": "Dono dos dados (ex.: o id do usuário no seu sistema). Cada dono só vê os próprios dados; o valor é comparado exatamente como escrito."
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 5,
+            "description": "Quantos trechos devolver."
+          },
+          "filters": {
+            "$ref": "#/$defs/Filters",
+            "description": "Só resultados cujos metadados tenham estes valores exatos, ex. {\"projeto\": \"x\"}."
+          },
+          "collection": {
+            "$ref": "#/$defs/Collection",
+            "description": "Pesquisar só nesta coleção."
+          }
+        }
+      },
+      "documents.list": {
+        "type": "object",
+        "required": [
+          "owner"
+        ],
+        "properties": {
+          "owner": {
+            "$ref": "#/$defs/Owner",
+            "description": "Dono dos dados (ex.: o id do usuário no seu sistema). Cada dono só vê os próprios dados; o valor é comparado exatamente como escrito."
+          },
+          "collection": {
+            "$ref": "#/$defs/Collection",
+            "description": "Só os documentos desta coleção."
+          }
+        }
+      },
+      "documents.remove": {
+        "type": "object",
+        "required": [
+          "doc_id",
+          "owner"
+        ],
+        "properties": {
+          "doc_id": {
+            "type": "string",
+            "description": "Id do documento (campo id devolvido por documents list ou add)."
+          },
+          "owner": {
+            "$ref": "#/$defs/Owner",
+            "description": "Dono dos dados (ex.: o id do usuário no seu sistema). Cada dono só vê os próprios dados; o valor é comparado exatamente como escrito."
+          }
+        }
+      },
+      "graph.data": {
+        "type": "object",
+        "required": [
+          "owner"
+        ],
+        "properties": {
+          "owner": {
+            "$ref": "#/$defs/Owner",
+            "description": "Dono dos dados (ex.: o id do usuário no seu sistema). Cada dono só vê os próprios dados; o valor é comparado exatamente como escrito."
+          },
+          "include_documents": {
+            "type": "boolean",
+            "description": "Incluir a base de conhecimento (coleções e documentos).",
+            "default": false
+          },
+          "include_chunks": {
+            "type": "boolean",
+            "description": "Incluir cada trecho como nó sob o seu documento.",
+            "default": false
+          }
+        }
+      },
+      "graph.html": {
+        "type": "object",
+        "required": [
+          "owner"
+        ],
+        "properties": {
+          "owner": {
+            "$ref": "#/$defs/Owner",
+            "description": "Dono dos dados (ex.: o id do usuário no seu sistema). Cada dono só vê os próprios dados; o valor é comparado exatamente como escrito."
+          },
+          "include_documents": {
+            "type": "boolean",
+            "description": "Incluir a base de conhecimento (coleções e documentos).",
+            "default": true
+          },
+          "include_chunks": {
+            "type": "boolean",
+            "description": "Incluir cada trecho como nó sob o seu documento.",
+            "default": false
+          }
+        }
+      },
+      "documents.add_text": {
+        "type": "object",
+        "required": [
+          "title",
+          "text",
+          "owner"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "description": "Título do documento (vira o nome do arquivo .md)."
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1,
+            "description": "O texto do documento."
+          },
+          "owner": {
+            "$ref": "#/$defs/Owner",
+            "description": "Dono dos dados (ex.: o id do usuário no seu sistema). Cada dono só vê os próprios dados; o valor é comparado exatamente como escrito."
+          },
+          "collection": {
+            "$ref": "#/$defs/Collection",
+            "description": "Coleção onde guardar (padrão: \"geral\")."
+          },
+          "metadata": {
+            "$ref": "#/$defs/Metadata",
+            "description": "Dados extras seus, guardados junto (objeto com texto, número ou sim/não)."
+          }
+        }
+      },
+      "documents.get": {
+        "type": "object",
+        "required": [
+          "doc_id",
+          "owner"
+        ],
+        "properties": {
+          "doc_id": {
+            "type": "string",
+            "description": "Id do documento (campo id devolvido por documents list ou add)."
+          },
+          "owner": {
+            "$ref": "#/$defs/Owner",
+            "description": "Dono dos dados (ex.: o id do usuário no seu sistema). Cada dono só vê os próprios dados; o valor é comparado exatamente como escrito."
+          }
+        }
+      },
+      "collections.list": {
+        "type": "object",
+        "required": [
+          "owner"
+        ],
+        "properties": {
+          "owner": {
+            "$ref": "#/$defs/Owner",
+            "description": "Dono dos dados (ex.: o id do usuário no seu sistema). Cada dono só vê os próprios dados; o valor é comparado exatamente como escrito."
+          }
+        }
+      },
+      "collections.delete": {
+        "type": "object",
+        "required": [
+          "name",
+          "owner"
+        ],
+        "properties": {
+          "name": {
+            "$ref": "#/$defs/Collection",
+            "description": "Nome da coleção a apagar, com todos os documentos e trechos."
+          },
+          "owner": {
+            "$ref": "#/$defs/Owner",
+            "description": "Dono dos dados (ex.: o id do usuário no seu sistema). Cada dono só vê os próprios dados; o valor é comparado exatamente como escrito."
+          }
+        }
+      },
+      "chunks.list": {
+        "type": "object",
+        "required": [
+          "owner"
+        ],
+        "properties": {
+          "owner": {
+            "$ref": "#/$defs/Owner",
+            "description": "Dono dos dados (ex.: o id do usuário no seu sistema). Cada dono só vê os próprios dados; o valor é comparado exatamente como escrito."
+          },
+          "doc_id": {
+            "type": "string",
+            "description": "Só os trechos deste documento."
+          },
+          "collection": {
+            "$ref": "#/$defs/Collection",
+            "description": "Só os trechos desta coleção."
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000,
+            "default": 50,
+            "description": "Quantos trechos devolver nesta página."
+          },
+          "offset": {
+            "type": "integer",
+            "minimum": 0,
+            "default": 0,
+            "description": "Quantos itens pular (paginação)."
+          }
+        }
+      },
+      "chunks.get": {
+        "type": "object",
+        "required": [
+          "chunk_id",
+          "owner"
+        ],
+        "properties": {
+          "chunk_id": {
+            "type": "string",
+            "description": "Id do trecho (campo id devolvido por chunks list)."
+          },
+          "owner": {
+            "$ref": "#/$defs/Owner",
+            "description": "Dono dos dados (ex.: o id do usuário no seu sistema). Cada dono só vê os próprios dados; o valor é comparado exatamente como escrito."
+          }
+        }
+      },
+      "chunks.delete": {
+        "type": "object",
+        "required": [
+          "chunk_id",
+          "owner"
+        ],
+        "properties": {
+          "chunk_id": {
+            "type": "string",
+            "description": "Id do trecho (campo id devolvido por chunks list)."
+          },
+          "owner": {
+            "$ref": "#/$defs/Owner",
+            "description": "Dono dos dados (ex.: o id do usuário no seu sistema). Cada dono só vê os próprios dados; o valor é comparado exatamente como escrito."
+          }
+        }
+      },
+      "stats": {
+        "type": "object",
+        "required": [
+          "owner"
+        ],
+        "properties": {
+          "owner": {
+            "$ref": "#/$defs/Owner",
+            "description": "Dono dos dados (ex.: o id do usuário no seu sistema). Cada dono só vê os próprios dados; o valor é comparado exatamente como escrito."
+          }
+        }
+      }
+    },
+    "Collection": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "Chunk": {
+      "type": "object",
+      "required": [
+        "id",
+        "doc_id",
+        "source",
+        "collection",
+        "location",
+        "index",
+        "text"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "doc_id": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "collection": {
+          "$ref": "#/$defs/Collection"
+        },
+        "location": {
+          "type": "string"
+        },
+        "index": {
+          "type": "integer"
+        },
+        "text": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

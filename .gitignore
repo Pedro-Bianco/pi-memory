@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+.venv-*/
+.pytest_cache/
+
+# Local data created by examples and tests
+data/
+*.qdrant/
+
+
+# Environment and editor
+.env
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
+
+# pi-memory local data and outputs
+pi_memory_data/
+tmp_*/
+/*.html
+.ruff_cache/
+examples/notebooks/dados_*/

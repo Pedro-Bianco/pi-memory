@@ -1,0 +1,12 @@
+# Text files are stored with LF; binary files are never converted.
+* text=auto eol=lf
+*.pdf binary
+*.png binary
+*.jpg binary
+*.docx binary
+*.xlsx binary
+*.pptx binary
+# Test and evaluation documents must keep their exact bytes (hashes, PDF offsets, cp1252 text).
+eval/fixtures/*.csv binary
+eval/fixtures/*.txt binary
+eval/fixtures/*.md binary

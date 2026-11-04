@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>__TITLE__</title>
+<style>
+  :root {
+    --bg: #f7f7f5; --panel: #ffffff; --text: #1d1d1b; --muted: #6b6b66; --line: #d9d8d2;
+    --edge: rgba(60, 60, 55, 0.18); --edge-similar: rgba(60, 60, 55, 0.42);
+    --accent: #2f6fde; --chip: #ecebe6; --shadow: 0 1px 3px rgba(0, 0, 0, .08);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #151514; --panel: #1f1f1d; --text: #ecebe6; --muted: #a3a29b; --line: #34332f;
+      --edge: rgba(236, 235, 230, 0.14); --edge-similar: rgba(236, 235, 230, 0.38);
+      --accent: #7aa7ff; --chip: #2a2a27; --shadow: 0 1px 3px rgba(0, 0, 0, .5);
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text);
+    font: 14px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  body { display: flex; flex-direction: column; overflow: hidden; width: 100%; }
+  header, .chips, main { min-width: 0; max-width: 100%; }
+  header { padding: 12px 16px; border-bottom: 1px solid var(--line); background: var(--panel);
+    display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; }
+  h1 { font-size: 16px; margin: 0; font-weight: 600; }
+  .stats { color: var(--muted); }
+  .tools { display: flex; gap: 8px; margin-left: auto; flex-wrap: wrap; }
+  input[type=search] { background: var(--bg); color: var(--text); border: 1px solid var(--line);
+    border-radius: 6px; padding: 6px 10px; min-width: 0; width: 200px; font: inherit; }
+  button { background: var(--chip); color: var(--text); border: 1px solid var(--line);
+    border-radius: 6px; padding: 6px 10px; font: inherit; cursor: pointer; }
+  button:hover { border-color: var(--muted); }
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; padding: 8px 16px;
+    border-bottom: 1px solid var(--line); background: var(--panel); }
+  .chip { display: inline-flex; align-items: center; gap: 6px; border-radius: 999px;
+    padding: 3px 10px; }
+  .chip .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .chip[aria-pressed=false] { opacity: .45; }
+  main { position: relative; flex: 1; min-height: 0; }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none;
+    cursor: grab; }
+  canvas.dragging { cursor: grabbing; }
+  aside { position: absolute; top: 12px; right: 12px; width: min(340px, calc(100% - 24px));
+    max-height: calc(100% - 24px); overflow: auto; background: var(--panel);
+    border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--shadow);
+    padding: 14px 16px; display: none; }
+  aside.open { display: block; }
+  aside h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .04em; margin: 0 0 8px;
+    color: var(--muted); display: flex; justify-content: space-between; align-items: center; }
+  aside p { margin: 0 0 12px; white-space: pre-wrap; overflow-wrap: anywhere; }
+  aside ul { list-style: none; padding: 0; margin: 0; }
+  aside li button { width: 100%; text-align: left; margin: 0 0 6px; background: var(--bg); }
+  .empty { position: absolute; inset: 0; display: none; align-items: center;
+    justify-content: center; color: var(--muted); font-size: 16px; }
+  .empty.show { display: flex; }
+  @media (max-width: 600px) {
+    .tools { width: 100%; margin-left: 0; flex-wrap: nowrap; }
+    input[type=search] { flex: 1 1 auto; width: auto; min-width: 0; }
+    aside { top: auto; bottom: 12px; max-height: 45%; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>__TITLE__</h1>
+  <span class="stats" id="stats"></span>
+  <div class="tools">
+    <input type="search" id="search" placeholder="Buscar nas memórias" aria-label="Buscar nas memórias">
+    <button type="button" id="fit">Centralizar</button>
+  </div>
+</header>
+<nav class="chips" id="chips" aria-label="Filtrar por assunto"></nav>
+<main>
+  <canvas id="canvas" aria-label="Grafo das memórias por assunto"></canvas>
+  <div class="empty" id="empty">nenhuma memória ainda</div>
+  <aside id="panel" aria-live="polite">
+    <h2><span id="panel-kind"></span><button type="button" id="close" aria-label="Fechar">×</button></h2>
+    <p id="panel-text"></p>
+    <h2 id="panel-related-title"></h2>
+    <ul id="panel-related"></ul>
+  </aside>
+</main>
+<script id="graph-data" type="application/json">/*__GRAPH_JSON__*/null</script>
+<script>
+(function () {
+  "use strict";
+  const data = JSON.parse(document.getElementById("graph-data").textContent) ||
+    { owner: "", nodes: [], edges: [] };
+  const PALETTE = ["#4e79a7", "#f28e2b", "#e15759", "#76b7b2", "#59a14f", "#edc948",
+                   "#b07aa1", "#ff9da7", "#9c755f", "#bab0ac"];
+  const LINK = { belongs: 85, similar: 60, contains: 55 };
+  const RADIUS = { topic: 14, collection: 14, document: 9, memory: 6, chunk: 4 };
+  const ANCHOR = (n) => n.kind === "topic" || n.kind === "collection";
+  const $ = (id) => document.getElementById(id);
+  const canvas = $("canvas"), ctx = canvas.getContext("2d");
+
+  // ── data ──────────────────────────────────────────────────────────────────────────────
+  const topics = [...new Set(data.nodes.filter(ANCHOR).map((n) => n.topic))];
+  const color = {};
+  topics.forEach((t, i) => {
+    color[t] = i < PALETTE.length ? PALETTE[i] : `hsl(${(i * 137.5) % 360} 55% 55%)`;
+  });
+  let seed = 314;
+  const random = () => ((seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648);
+  const ring = Math.max(150, 30 * topics.length);
+  const nodes = data.nodes.map((n) => ({ ...n, x: 0, y: 0, vx: 0, vy: 0, r: RADIUS[n.kind] || 6 }));
+  const byId = Object.fromEntries(nodes.map((n) => [n.id, n]));
+  // topics drawn last, so their names stay on top of the memories
+  const drawOrder = [...nodes.filter((n) => !ANCHOR(n) && n.kind !== "document"),
+                     ...nodes.filter((n) => n.kind === "document"), ...nodes.filter(ANCHOR)];
+  nodes.filter(ANCHOR).forEach((n, k) => {
+    const a = (2 * Math.PI * k) / Math.max(1, topics.length);
+    n.x = ring * Math.cos(a); n.y = ring * Math.sin(a);
+  });
+  // every other node starts next to what it belongs to (topic, collection or document)
+  const parentOf = {};
+  data.edges.forEach((e) => { if (e.kind !== "similar") parentOf[e.source] = e.target; });
+  for (const kind of ["memory", "document", "chunk"]) {
+    nodes.filter((n) => n.kind === kind).forEach((n) => {
+      const p = byId[parentOf[n.id]] || { x: 0, y: 0 };
+      n.x = p.x + (random() - 0.5) * 60; n.y = p.y + (random() - 0.5) * 60;
+    });
+  }
+  const edges = data.edges.map((e) => ({ ...e, a: byId[e.source], b: byId[e.target] }))
+    .filter((e) => e.a && e.b);
+  const neighbours = {}, children = {};
+  edges.filter((e) => e.kind === "similar").forEach((e) => {
+    (neighbours[e.a.id] ||= []).push(e.b); (neighbours[e.b.id] ||= []).push(e.a);
+  });
+  edges.filter((e) => e.kind !== "similar").forEach((e) => (children[e.b.id] ||= []).push(e.a));
+
+  const count = (kind) => nodes.filter((n) => n.kind === kind).length;
+  const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
+  const memoriesCount = count("memory"), documentsCount = count("document");
+  $("stats").textContent = data.owner ? [data.owner,
+    plural(memoriesCount, "memória", "memórias"), plural(count("topic"), "assunto", "assuntos"),
+    ...(count("collection") ? [plural(count("collection"), "coleção", "coleções"),
+                               plural(documentsCount, "documento", "documentos")] : []),
+  ].join(" · ") : "";
+  $("empty").classList.toggle("show", memoriesCount + documentsCount === 0);
+
+  // ── state ─────────────────────────────────────────────────────────────────────────────
+  const hidden = new Set();
+  // autoFit: keep the drawing framed while the layout settles, until the person moves it
+  let query = "", selected = null, hovered = null, alpha = 1, autoFit = true;
+  const view = { scale: 1, x: 0, y: 0 };
+  const visible = (n) => !hidden.has(n.topic);
+  const matches = (n) => !query || (n.text || n.label).toLowerCase().includes(query);
+
+  // ── layout: repulsion between all pairs, springs on links, weak pull to the centre ────────
+  function tick() {
+    for (let i = 0; i < nodes.length; i++) {
+      const a = nodes[i];
+      for (let j = i + 1; j < nodes.length; j++) {
+        const b = nodes[j];
+        let dx = a.x - b.x, dy = a.y - b.y, d2 = dx * dx + dy * dy;
+        if (d2 < 25) { dx = random() - 0.5; dy = random() - 0.5; d2 = 25; }
+        const f = (1400 * alpha) / d2;
+        a.vx += dx * f / 10; a.vy += dy * f / 10; b.vx -= dx * f / 10; b.vy -= dy * f / 10;
+      }
+    }
+    for (const e of edges) {
+      const dx = e.b.x - e.a.x, dy = e.b.y - e.a.y, d = Math.hypot(dx, dy) || 1;
+      const f = ((d - LINK[e.kind]) / d) * 0.06 * alpha;
+      e.a.vx += dx * f; e.a.vy += dy * f; e.b.vx -= dx * f; e.b.vy -= dy * f;
+    }
+    for (const n of nodes) {
+      n.vx -= n.x * 0.004 * alpha; n.vy -= n.y * 0.004 * alpha;
+      if (n === dragged) { n.vx = n.vy = 0; continue; }
+      n.vx *= 0.6; n.vy *= 0.6; n.x += n.vx; n.y += n.vy;
+    }
+    alpha *= 0.985;
+  }
+
+  // ── drawing ───────────────────────────────────────────────────────────────────────────
+  let css = {};
+  function readColors() {
+    const s = getComputedStyle(document.documentElement);
+    css = Object.fromEntries(["--bg", "--text", "--muted", "--edge", "--edge-similar", "--accent"]
+      .map((k) => [k, s.getPropertyValue(k).trim()]));
+  }
+  function resize() {
+    const ratio = window.devicePixelRatio || 1, box = canvas.getBoundingClientRect();
+    canvas.width = Math.round(box.width * ratio); canvas.height = Math.round(box.height * ratio);
+    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    draw();
+  }
+  function toScreen(n) {
+    const box = canvas.getBoundingClientRect();
+    return [box.width / 2 + view.x + n.x * view.scale, box.height / 2 + view.y + n.y * view.scale];
+  }
+  function draw() {
+    const box = canvas.getBoundingClientRect();
+    ctx.clearRect(0, 0, box.width, box.height);
+    const focus = selected ? new Set([selected.id, ...(neighbours[selected.id] || []).map((n) => n.id),
+      ...(children[selected.id] || []).map((n) => n.id), "t:" + selected.topic,
+      ...(parentOf[selected.id] ? [parentOf[selected.id]] : [])]) : null;
+    for (const e of edges) {
+      if (!visible(e.a) || !visible(e.b)) continue;
+      const [x1, y1] = toScreen(e.a), [x2, y2] = toScreen(e.b);
+      const lit = focus && focus.has(e.a.id) && focus.has(e.b.id);
+      ctx.strokeStyle = lit ? css["--accent"] : e.kind === "similar" ? css["--edge-similar"] : css["--edge"];
+      ctx.lineWidth = lit ? 2 : 1;
+      ctx.setLineDash(e.kind === "similar" ? [4, 4] : []);
+      ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+    }
+    ctx.setLineDash([]);
+    for (const n of drawOrder) {
+      if (!visible(n)) continue;
+      const [x, y] = toScreen(n), r = n.r * Math.min(1.6, Math.max(0.7, view.scale));
+      const dim = (focus && !focus.has(n.id)) || (!ANCHOR(n) && !matches(n));
+      ctx.globalAlpha = dim ? 0.25 : 1;
+      ctx.fillStyle = color[n.topic] || css["--muted"];
+      ctx.beginPath();
+      if (n.kind === "collection" || n.kind === "document") ctx.rect(x - r, y - r, 2 * r, 2 * r);
+      else ctx.arc(x, y, r, 0, 2 * Math.PI);
+      ctx.fill();
+      if (n === selected || n === hovered) {
+        ctx.strokeStyle = css["--text"]; ctx.lineWidth = 2; ctx.stroke();
+      }
+      const showLabel = ANCHOR(n) || n === hovered || n === selected || (query && matches(n)) ||
+        (n.kind === "document" && view.scale > 0.8) || view.scale > 1.6;
+      if (showLabel) {
+        ctx.fillStyle = css["--text"];
+        ctx.font = ANCHOR(n) ? "600 13px system-ui, sans-serif" : "12px system-ui, sans-serif";
+        ctx.textAlign = "center";
+        ctx.lineJoin = "round"; ctx.lineWidth = 4; ctx.strokeStyle = css["--bg"];
+        ctx.strokeText(n.label, x, y - r - 6);
+        ctx.fillText(n.label, x, y - r - 6);
+      }
+      ctx.globalAlpha = 1;
+    }
+  }
+  function loop() {
+    if (alpha > 0.01 || dragged) {
+      tick();
+      if (autoFit && !dragged) fit(); else draw();
+    }
+    requestAnimationFrame(loop);
+  }
+  function fit() {
+    const shown = nodes.filter(visible);
+    if (!shown.length) return;
+    const box = canvas.getBoundingClientRect();
+    const xs = shown.map((n) => n.x), ys = shown.map((n) => n.y);
+    const w = Math.max(...xs) - Math.min(...xs) + 120, h = Math.max(...ys) - Math.min(...ys) + 120;
+    view.scale = Math.min(2, Math.max(0.05, Math.min(box.width / w, box.height / h)));
+    view.x = -((Math.max(...xs) + Math.min(...xs)) / 2) * view.scale;
+    view.y = -((Math.max(...ys) + Math.min(...ys)) / 2) * view.scale;
+    draw();
+  }
+
+  // ── interaction: drag a node, pan the empty space, wheel or two fingers to zoom ───────────
+  const pointers = new Map();
+  let dragged = null, panning = false, moved = false, pinch = 0;
+  function nodeAt(px, py) {
+    let best = null, bestD = Infinity;
+    for (const n of nodes) {
+      if (!visible(n)) continue;
+      const [x, y] = toScreen(n), d = Math.hypot(x - px, y - py);
+      if (d < Math.max(10, n.r * view.scale + 4) && d < bestD) { best = n; bestD = d; }
+    }
+    return best;
+  }
+  function local(ev) {
+    const box = canvas.getBoundingClientRect();
+    return [ev.clientX - box.left, ev.clientY - box.top];
+  }
+  canvas.addEventListener("pointerdown", (ev) => {
+    canvas.setPointerCapture(ev.pointerId);
+    pointers.set(ev.pointerId, local(ev));
+    moved = false;
+    if (pointers.size === 2) {
+      const [a, b] = [...pointers.values()]; pinch = Math.hypot(a[0] - b[0], a[1] - b[1]);
+      dragged = null; panning = false; return;
+    }
+    const [px, py] = local(ev);
+    dragged = nodeAt(px, py);
+    panning = !dragged;
+    autoFit = false;
+    canvas.classList.add("dragging");
+  });
+  canvas.addEventListener("pointermove", (ev) => {
+    const [px, py] = local(ev), last = pointers.get(ev.pointerId);
+    if (!last) { const h = nodeAt(px, py); if (h !== hovered) { hovered = h; draw(); } return; }
+    pointers.set(ev.pointerId, [px, py]);
+    if (pointers.size === 2) {
+      const [a, b] = [...pointers.values()], d = Math.hypot(a[0] - b[0], a[1] - b[1]);
+      autoFit = false;
+      if (pinch) zoomAt((a[0] + b[0]) / 2, (a[1] + b[1]) / 2, d / pinch);
+      pinch = d; moved = true; return;
+    }
+    const dx = px - last[0], dy = py - last[1];
+    if (Math.abs(dx) + Math.abs(dy) > 2) moved = true;
+    if (dragged) {
+      dragged.x += dx / view.scale; dragged.y += dy / view.scale; alpha = Math.max(alpha, 0.3);
+    } else if (panning) { view.x += dx; view.y += dy; draw(); }
+  });
+  function release(ev) {
+    pointers.delete(ev.pointerId);
+    if (pointers.size < 2) pinch = 0;
+    if (!pointers.size) {
+      if (!moved) select(dragged);
+      dragged = null; panning = false; canvas.classList.remove("dragging");
+    }
+  }
+  canvas.addEventListener("pointerup", release);
+  canvas.addEventListener("pointercancel", release);
+  function zoomAt(px, py, factor) {
+    const box = canvas.getBoundingClientRect();
+    const scale = Math.min(6, Math.max(0.05, view.scale * factor));
+    const cx = px - box.width / 2, cy = py - box.height / 2;
+    view.x = cx - ((cx - view.x) * scale) / view.scale;
+    view.y = cy - ((cy - view.y) * scale) / view.scale;
+    view.scale = scale; draw();
+  }
+  canvas.addEventListener("wheel", (ev) => {
+    ev.preventDefault();
+    autoFit = false;
+    const [px, py] = local(ev);
+    zoomAt(px, py, Math.exp(-ev.deltaY * 0.0015));
+  }, { passive: false });
+
+  // ── panel ─────────────────────────────────────────────────────────────────────────────
+  function select(n) {
+    selected = n;
+    const panel = $("panel");
+    panel.classList.toggle("open", !!n);
+    if (n) {
+      const members = n.kind === "memory" ? neighbours[n.id] || [] : children[n.id] || [];
+      const KIND = { topic: "Assunto", memory: "Memória", collection: "Coleção",
+                     document: "Documento", chunk: "Trecho" };
+      const RELATED = { topic: "Memórias", memory: "Mais parecida", collection: "Documentos",
+                        document: "Trechos" };
+      $("panel-kind").textContent = `${KIND[n.kind]}: ${n.label}`;
+      $("panel-text").textContent = n.kind === "topic" || n.kind === "collection"
+        ? plural(members.length, "item", "itens") + "." : n.text || n.label;
+      $("panel-related-title").textContent = members.length ? RELATED[n.kind] || "" : "";
+      const list = $("panel-related");
+      list.replaceChildren(...members.map((m) => {
+        const li = document.createElement("li"), b = document.createElement("button");
+        b.type = "button"; b.textContent = m.text || m.label;
+        b.addEventListener("click", () => select(m));
+        li.append(b); return li;
+      }));
+    }
+    draw();
+  }
+  $("close").addEventListener("click", () => select(null));
+  document.addEventListener("keydown", (ev) => { if (ev.key === "Escape") select(null); });
+
+  // ── filters ───────────────────────────────────────────────────────────────────────────
+  topics.forEach((t) => {
+    const chip = document.createElement("button");
+    chip.type = "button"; chip.className = "chip"; chip.setAttribute("aria-pressed", "true");
+    const dot = document.createElement("span"); dot.className = "dot"; dot.style.background = color[t];
+    const items = nodes.filter((n) => !ANCHOR(n) && n.kind !== "chunk" && n.topic === t).length;
+    chip.append(dot, `${t} (${items})`);
+    chip.addEventListener("click", () => {
+      if (hidden.has(t)) hidden.delete(t); else hidden.add(t);
+      chip.setAttribute("aria-pressed", String(!hidden.has(t)));
+      if (selected && hidden.has(selected.topic)) select(null); else draw();
+    });
+    $("chips").append(chip);
+  });
+  $("chips").hidden = topics.length === 0;
+  $("search").addEventListener("input", (ev) => { query = ev.target.value.trim().toLowerCase(); draw(); });
+  $("fit").addEventListener("click", () => { autoFit = true; fit(); });
+
+  // ── start: settle most of the layout before the first frame, then fit to the window ────────
+  readColors();
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { readColors(); draw(); });
+  window.addEventListener("resize", resize);
+  for (let i = 0; i < 250 && alpha > 0.05; i++) tick();
+  resize(); fit(); loop();
+})();
+</script>
+</body>
+</html>

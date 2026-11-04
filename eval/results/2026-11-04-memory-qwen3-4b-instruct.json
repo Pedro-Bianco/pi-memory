@@ -1,0 +1,460 @@
+{
+  "suite": "memory",
+  "cases": 56,
+  "passed": 34,
+  "accuracy": 0.6071,
+  "wrongful_deletions": 0,
+  "by_category": {
+    "add": {
+      "passed": 8,
+      "total": 12
+    },
+    "assistant_only": {
+      "passed": 3,
+      "total": 3
+    },
+    "complement": {
+      "passed": 3,
+      "total": 5
+    },
+    "delete": {
+      "passed": 2,
+      "total": 8
+    },
+    "duplicate": {
+      "passed": 8,
+      "total": 8
+    },
+    "long": {
+      "passed": 1,
+      "total": 2
+    },
+    "nothing": {
+      "passed": 6,
+      "total": 6
+    },
+    "update": {
+      "passed": 3,
+      "total": 12
+    }
+  },
+  "events": {
+    "add": 17,
+    "none": 7,
+    "update": 6,
+    "delete": 1
+  },
+  "add_seconds": {
+    "p50": 0.39,
+    "p95": 1.98,
+    "max": 16.55,
+    "mean": 0.84
+  },
+  "seconds_total": 65.2,
+  "engines": {
+    "embedder": "fastembed:intfloat/multilingual-e5-large",
+    "llm": "ollama:qwen3:4b-instruct",
+    "store": "qdrant-local"
+  },
+  "wrongful": [],
+  "failures": [
+    {
+      "case": "add-04",
+      "missing": [
+        "12 de marco"
+      ],
+      "present": [],
+      "too_many": false,
+      "lost": [],
+      "final": [],
+      "decisions": [],
+      "seconds": 0.12
+    },
+    {
+      "case": "add-05",
+      "missing": [
+        "curt"
+      ],
+      "present": [],
+      "too_many": false,
+      "lost": [],
+      "final": [],
+      "decisions": [],
+      "seconds": 0.1
+    },
+    {
+      "case": "add-06",
+      "missing": [
+        "chefe"
+      ],
+      "present": [],
+      "too_many": false,
+      "lost": [],
+      "final": [],
+      "decisions": [],
+      "seconds": 0.1
+    },
+    {
+      "case": "add-11",
+      "missing": [
+        "padaria"
+      ],
+      "present": [],
+      "too_many": false,
+      "lost": [],
+      "final": [],
+      "decisions": [],
+      "seconds": 0.12
+    },
+    {
+      "case": "complement-03",
+      "missing": [
+        "recife"
+      ],
+      "present": [],
+      "too_many": false,
+      "lost": [],
+      "final": [
+        "O usuário mora em Curitiba"
+      ],
+      "decisions": [],
+      "seconds": 0.14
+    },
+    {
+      "case": "complement-05",
+      "missing": [
+        "bia"
+      ],
+      "present": [],
+      "too_many": false,
+      "lost": [],
+      "final": [
+        "O usuário tem uma filha chamada Lia"
+      ],
+      "decisions": [
+        {
+          "event": "none",
+          "memory_id": null,
+          "text": "O usuário tem uma filha chamada Bia que nasceu ontem",
+          "previous_text": null,
+          "topic": null,
+          "reason": null
+        }
+      ],
+      "seconds": 0.89
+    },
+    {
+      "case": "update-03",
+      "missing": [
+        "31"
+      ],
+      "present": [
+        "30 anos"
+      ],
+      "too_many": false,
+      "lost": [],
+      "final": [
+        "O usuário tem 30 anos"
+      ],
+      "decisions": [],
+      "seconds": 0.66
+    },
+    {
+      "case": "update-04",
+      "missing": [
+        "ana"
+      ],
+      "present": [
+        "chefe"
+      ],
+      "too_many": false,
+      "lost": [],
+      "final": [
+        "O usuário quer ser chamado de chefe"
+      ],
+      "decisions": [
+        {
+          "event": "none",
+          "memory_id": null,
+          "text": "O usuário pediu para ser chamado de Ana",
+          "previous_text": null,
+          "topic": null,
+          "reason": null
+        }
+      ],
+      "seconds": 0.89
+    },
+    {
+      "case": "update-05",
+      "missing": [
+        "livraria"
+      ],
+      "present": [
+        "padaria"
+      ],
+      "too_many": false,
+      "lost": [],
+      "final": [
+        "O usuário trabalha na Padaria Exemplo"
+      ],
+      "decisions": [],
+      "seconds": 0.14
+    },
+    {
+      "case": "update-06",
+      "missing": [
+        "10 km"
+      ],
+      "present": [
+        "5 km"
+      ],
+      "too_many": false,
+      "lost": [],
+      "final": [
+        "O usuário corre 5 km por dia"
+      ],
+      "decisions": [],
+      "seconds": 0.1
+    },
+    {
+      "case": "update-07",
+      "missing": [
+        "curt"
+      ],
+      "present": [
+        "longas"
+      ],
+      "too_many": false,
+      "lost": [],
+      "final": [
+        "O usuário prefere respostas longas"
+      ],
+      "decisions": [],
+      "seconds": 0.09
+    },
+    {
+      "case": "update-08",
+      "missing": [],
+      "present": [
+        "prata"
+      ],
+      "too_many": false,
+      "lost": [],
+      "final": [
+        "O usuário trocou seu carro prata por um azul"
+      ],
+      "decisions": [
+        {
+          "event": "update",
+          "memory_id": "dd4fa581-846a-4413-861d-37134d25fae3",
+          "text": "O usuário trocou seu carro prata por um azul",
+          "previous_text": "O usuário dirige um carro prata",
+          "topic": "casa",
+          "reason": null
+        }
+      ],
+      "seconds": 1.41
+    },
+    {
+      "case": "update-09",
+      "missing": [
+        "direito"
+      ],
+      "present": [
+        "engenharia"
+      ],
+      "too_many": false,
+      "lost": [],
+      "final": [
+        "O usuário estuda engenharia"
+      ],
+      "decisions": [],
+      "seconds": 0.13
+    },
+    {
+      "case": "update-10",
+      "missing": [
+        "cas"
+      ],
+      "present": [
+        "solteir"
+      ],
+      "too_many": false,
+      "lost": [],
+      "final": [
+        "O usuário é solteiro"
+      ],
+      "decisions": [],
+      "seconds": 0.09
+    },
+    {
+      "case": "update-12",
+      "missing": [
+        "8h"
+      ],
+      "present": [
+        "6h"
+      ],
+      "too_many": false,
+      "lost": [],
+      "final": [
+        "O usuário acorda às 6h"
+      ],
+      "decisions": [],
+      "seconds": 0.13
+    },
+    {
+      "case": "delete-02",
+      "missing": [],
+      "present": [
+        "gosta de cafe"
+      ],
+      "too_many": false,
+      "lost": [],
+      "final": [
+        "O usuário gosta de café"
+      ],
+      "decisions": [],
+      "seconds": 0.13
+    },
+    {
+      "case": "delete-03",
+      "missing": [],
+      "present": [
+        "tem uma moto"
+      ],
+      "too_many": false,
+      "lost": [],
+      "final": [
+        "O usuário tem uma moto"
+      ],
+      "decisions": [],
+      "seconds": 0.09
+    },
+    {
+      "case": "delete-04",
+      "missing": [],
+      "present": [
+        "joga futebol"
+      ],
+      "too_many": false,
+      "lost": [],
+      "final": [
+        "O usuário joga futebol às quintas"
+      ],
+      "decisions": [],
+      "seconds": 0.09
+    },
+    {
+      "case": "delete-05",
+      "missing": [],
+      "present": [
+        "o usuario fuma"
+      ],
+      "too_many": false,
+      "lost": [],
+      "final": [
+        "O usuário fuma"
+      ],
+      "decisions": [],
+      "seconds": 0.09
+    },
+    {
+      "case": "delete-06",
+      "missing": [],
+      "present": [
+        "tem um aquario"
+      ],
+      "too_many": false,
+      "lost": [],
+      "final": [
+        "O usuário tem um aquário"
+      ],
+      "decisions": [],
+      "seconds": 0.09
+    },
+    {
+      "case": "delete-08",
+      "missing": [],
+      "present": [
+        "e vegetariano"
+      ],
+      "too_many": false,
+      "lost": [],
+      "final": [
+        "O usuário é vegetariano"
+      ],
+      "decisions": [],
+      "seconds": 0.13
+    },
+    {
+      "case": "long-01",
+      "missing": [
+        "caio"
+      ],
+      "present": [],
+      "too_many": false,
+      "lost": [],
+      "final": [
+        "O usuário faz pilates às terças",
+        "O usuário cuida do seu filho Davi à tarde",
+        "O usuário dá aula de manhã",
+        "O usuário é professora"
+      ],
+      "decisions": [
+        {
+          "event": "add",
+          "memory_id": "b36ffc66-8f40-493e-8c44-ecf76d0f544f",
+          "text": "O usuário é professora",
+          "previous_text": null,
+          "topic": "estudos",
+          "reason": null
+        },
+        {
+          "event": "add",
+          "memory_id": "7a36fdb2-ed2c-45f1-a67c-768e7b72a822",
+          "text": "O usuário dá aula de manhã",
+          "previous_text": null,
+          "topic": "rotina",
+          "reason": null
+        },
+        {
+          "event": "add",
+          "memory_id": "52384736-ba9c-4d3f-968b-30fd48b27552",
+          "text": "O usuário cuida do seu filho Davi à tarde",
+          "previous_text": null,
+          "topic": "família",
+          "reason": null
+        },
+        {
+          "event": "add",
+          "memory_id": "b6f60bab-5cdc-413a-ad56-10e5bedcc123",
+          "text": "O usuário faz pilates às terças",
+          "previous_text": null,
+          "topic": "saúde",
+          "reason": null
+        }
+      ],
+      "seconds": 4.16
+    }
+  ],
+  "summary": {
+    "cases": 56,
+    "passed": 34,
+    "accuracy": 0.6071,
+    "wrongful_deletions": 0
+  },
+  "date": "2026-11-04",
+  "pi_memory": "0.1.0",
+  "machine": {
+    "os": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.10",
+    "cpu": "AMD64 Family 25 Model 33 Stepping 2, AuthenticAMD"
+  },
+  "packages": {
+    "fastembed": "0.9.1",
+    "qdrant-client": "1.20.0",
+    "httpx": "0.28.1",
+    "pypdf": "6.21.4"
+  }
+}

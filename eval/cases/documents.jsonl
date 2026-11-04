@@ -1,0 +1,52 @@
+{"id": "doc-01", "question": "Quem são as partes do contrato de serviços?", "source": "contrato_exemplo.pdf", "location": "página 1"}
+{"id": "doc-02", "question": "Qual é o objeto do contrato?", "source": "contrato_exemplo.pdf", "location": "página 2"}
+{"id": "doc-03", "question": "Quando acontecem as visitas técnicas mensais?", "source": "contrato_exemplo.pdf", "location": "página 3"}
+{"id": "doc-04", "question": "Em quanto tempo deve começar um atendimento de emergência?", "source": "contrato_exemplo.pdf", "location": "página 4"}
+{"id": "doc-05", "question": "As peças de reposição estão incluídas no preço?", "source": "contrato_exemplo.pdf", "location": "página 5"}
+{"id": "doc-06", "question": "Quem é o responsável técnico da empresa contratada?", "source": "contrato_exemplo.pdf", "location": "página 6"}
+{"id": "doc-07", "question": "Como é feito o faturamento do serviço?", "source": "contrato_exemplo.pdf", "location": "página 7"}
+{"id": "doc-08", "question": "Qual é a forma de pagamento e o dia de vencimento?", "source": "contrato_exemplo.pdf", "location": "página 8"}
+{"id": "doc-09", "question": "Como é corrigido o valor do contrato a cada ano?", "source": "contrato_exemplo.pdf", "location": "página 9"}
+{"id": "doc-10", "question": "A contratante precisa liberar acesso às áreas técnicas?", "source": "contrato_exemplo.pdf", "location": "página 10"}
+{"id": "doc-11", "question": "Quem paga o seguro de responsabilidade civil?", "source": "contrato_exemplo.pdf", "location": "página 11"}
+{"id": "doc-12", "question": "Qual o prazo para entregar os relatórios depois da visita?", "source": "contrato_exemplo.pdf", "location": "página 12"}
+{"id": "doc-13", "question": "As empresas podem divulgar dados comerciais uma da outra?", "source": "contrato_exemplo.pdf", "location": "página 13"}
+{"id": "doc-14", "question": "Como funciona o cancelamento do contrato?", "source": "contrato_exemplo.pdf", "location": "página 14"}
+{"id": "doc-15", "question": "Qual a penalidade por pagar a parcela com atraso?", "source": "contrato_exemplo.pdf", "location": "página 15"}
+{"id": "doc-16", "question": "O treinamento da equipe tem custo adicional?", "source": "contrato_exemplo.pdf", "location": "página 16"}
+{"id": "doc-17", "question": "Como incluir equipamentos novos no contrato?", "source": "contrato_exemplo.pdf", "location": "página 17"}
+{"id": "doc-18", "question": "Por qual meio são feitas as comunicações oficiais?", "source": "contrato_exemplo.pdf", "location": "página 18"}
+{"id": "doc-19", "question": "Qual é o foro para resolver disputas?", "source": "contrato_exemplo.pdf", "location": "página 19"}
+{"id": "doc-20", "question": "Quem assina o contrato?", "source": "contrato_exemplo.pdf", "location": "página 20"}
+{"id": "doc-21", "question": "Quanto cresceram as vendas no trimestre?", "source": "relatorio.docx", "location": "trecho 1"}
+{"id": "doc-22", "question": "Quando começa a operar o novo centro de distribuição?", "source": "relatorio.docx", "location": "trecho 1"}
+{"id": "doc-23", "question": "Qual a receita da região Sul?", "source": "relatorio.docx", "location": "trecho 1"}
+{"id": "doc-24", "question": "Qual a meta de prazo de entrega para o próximo trimestre?", "source": "relatorio.docx", "location": "trecho 1"}
+{"id": "doc-25", "question": "O que diz a cláusula sobre multa por atraso no relatório?", "source": "relatorio.docx", "location": "trecho 1"}
+{"id": "doc-26", "question": "Qual é o título do plano comercial?", "source": "apresentacao.pptx", "location": "slide 1"}
+{"id": "doc-27", "question": "Quais regiões são prioridade no plano comercial?", "source": "apresentacao.pptx", "location": "slide 2"}
+{"id": "doc-28", "question": "Que tipo de cliente é prioridade?", "source": "apresentacao.pptx", "location": "slide 2"}
+{"id": "doc-29", "question": "Quanto a carteira de clientes deve crescer no ano?", "source": "apresentacao.pptx", "location": "slide 3"}
+{"id": "doc-30", "question": "Quantos clientes novos o apresentador quer conquistar até dezembro?", "source": "apresentacao.pptx", "location": "slide 3 (notas)"}
+{"id": "doc-31", "question": "Qual cliente tem a nota de maior valor?", "source": "vendas.xlsx", "location": "aba Vendas, linhas 1–5"}
+{"id": "doc-32", "question": "Quanto vendemos para o Mercado Exemplo?", "source": "vendas.xlsx", "location": "aba Vendas, linhas 1–5"}
+{"id": "doc-33", "question": "Qual nota foi emitida para a Padaria Imaginária?", "source": "vendas.xlsx", "location": "aba Vendas, linhas 1–5"}
+{"id": "doc-34", "question": "Em que cidade fica a Loja Fictícia?", "source": "vendas.xlsx", "location": "aba Clientes, linhas 1–3"}
+{"id": "doc-35", "question": "Onde está localizado o cliente Mercado Exemplo?", "source": "vendas.xlsx", "location": "aba Clientes, linhas 1–3"}
+{"id": "doc-36", "question": "Quantas notas a Loja Fictícia recebeu?", "source": "vendas.xlsx", "location": "aba Vendas, linhas 1–5"}
+{"id": "doc-37", "question": "Em quantos dias os fornecedores recebem?", "source": "notas.md", "location": "seção Pagamento"}
+{"id": "doc-38", "question": "Quando vence a conta de luz?", "source": "notas.md", "location": "seção Pagamento"}
+{"id": "doc-39", "question": "Quantas pessoas a equipe de vendas vai ganhar?", "source": "notas.md", "location": "seção Equipe"}
+{"id": "doc-40", "question": "Onde será o treinamento da equipe?", "source": "notas.md", "location": "seção Equipe"}
+{"id": "doc-41", "question": "Do que trata a reunião registrada nas notas?", "source": "notas.md", "location": "seção Notas da reunião"}
+{"id": "doc-42", "question": "Como limpar a cafeteira?", "source": "manual.txt", "location": "trecho 1"}
+{"id": "doc-43", "question": "Que água devo usar na cafeteira?", "source": "manual.txt", "location": "trecho 1"}
+{"id": "doc-44", "question": "De quanto em quanto tempo aplicar o descalcificante?", "source": "manual.txt", "location": "trecho 1"}
+{"id": "doc-45", "question": "Quantas arruelas temos em estoque?", "source": "estoque.csv", "location": "linhas 2–4"}
+{"id": "doc-46", "question": "Quem fornece as porcas?", "source": "estoque.csv", "location": "linhas 2–4"}
+{"id": "doc-47", "question": "Qual o estoque de parafusos?", "source": "estoque.csv", "location": "linhas 2–4"}
+{"id": "doc-48", "question": "O atendimento técnico tem prazo máximo para começar?", "source": "contrato_exemplo.pdf", "location": "página 4"}
+{"id": "doc-49", "question": "Existe multa se eu rescindir depois de um ano?", "source": "contrato_exemplo.pdf", "location": "página 14"}
+{"id": "doc-50", "question": "Qual a data de vencimento dos boletos?", "source": "contrato_exemplo.pdf", "location": "página 8"}
+{"id": "doc-51", "question": "Que porcentagem de juros incide no atraso do pagamento?", "source": "contrato_exemplo.pdf", "location": "página 15"}
+{"id": "doc-52", "question": "Os relatórios técnicos têm prazo de quantos dias?", "source": "contrato_exemplo.pdf", "location": "página 12"}

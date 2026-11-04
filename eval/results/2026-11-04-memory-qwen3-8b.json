@@ -1,0 +1,411 @@
+{
+  "suite": "memory",
+  "cases": 56,
+  "passed": 36,
+  "accuracy": 0.6429,
+  "wrongful_deletions": 0,
+  "by_category": {
+    "add": {
+      "passed": 6,
+      "total": 12
+    },
+    "assistant_only": {
+      "passed": 3,
+      "total": 3
+    },
+    "complement": {
+      "passed": 3,
+      "total": 5
+    },
+    "delete": {
+      "passed": 6,
+      "total": 8
+    },
+    "duplicate": {
+      "passed": 8,
+      "total": 8
+    },
+    "long": {
+      "passed": 1,
+      "total": 2
+    },
+    "nothing": {
+      "passed": 6,
+      "total": 6
+    },
+    "update": {
+      "passed": 3,
+      "total": 12
+    }
+  },
+  "events": {
+    "add": 19,
+    "update": 11
+  },
+  "add_seconds": {
+    "p50": 1.68,
+    "p95": 11.12,
+    "max": 35.98,
+    "mean": 4.47
+  },
+  "seconds_total": 258.9,
+  "engines": {
+    "embedder": "fastembed:intfloat/multilingual-e5-large",
+    "llm": "ollama:qwen3:8b",
+    "store": "qdrant-local"
+  },
+  "wrongful": [],
+  "failures": [
+    {
+      "case": "add-04",
+      "missing": [
+        "12 de marco"
+      ],
+      "present": [],
+      "too_many": false,
+      "lost": [],
+      "final": [],
+      "decisions": [],
+      "seconds": 1.69
+    },
+    {
+      "case": "add-05",
+      "missing": [
+        "curt"
+      ],
+      "present": [],
+      "too_many": false,
+      "lost": [],
+      "final": [],
+      "decisions": [],
+      "seconds": 1.62
+    },
+    {
+      "case": "add-06",
+      "missing": [
+        "chefe"
+      ],
+      "present": [],
+      "too_many": false,
+      "lost": [],
+      "final": [],
+      "decisions": [],
+      "seconds": 1.62
+    },
+    {
+      "case": "add-07",
+      "missing": [
+        "calculo"
+      ],
+      "present": [],
+      "too_many": false,
+      "lost": [],
+      "final": [],
+      "decisions": [],
+      "seconds": 1.66
+    },
+    {
+      "case": "add-10",
+      "missing": [
+        "lia",
+        "bia"
+      ],
+      "present": [],
+      "too_many": false,
+      "lost": [],
+      "final": [],
+      "decisions": [],
+      "seconds": 1.51
+    },
+    {
+      "case": "add-11",
+      "missing": [
+        "padaria"
+      ],
+      "present": [],
+      "too_many": false,
+      "lost": [],
+      "final": [],
+      "decisions": [],
+      "seconds": 1.44
+    },
+    {
+      "case": "complement-03",
+      "missing": [
+        "recife"
+      ],
+      "present": [],
+      "too_many": false,
+      "lost": [],
+      "final": [
+        "O usuário mora em Curitiba"
+      ],
+      "decisions": [],
+      "seconds": 1.69
+    },
+    {
+      "case": "complement-05",
+      "missing": [
+        "bia"
+      ],
+      "present": [],
+      "too_many": false,
+      "lost": [],
+      "final": [
+        "O usuário tem uma filha chamada Lia"
+      ],
+      "decisions": [],
+      "seconds": 1.71
+    },
+    {
+      "case": "update-01",
+      "missing": [
+        "recife"
+      ],
+      "present": [
+        "curitiba"
+      ],
+      "too_many": false,
+      "lost": [],
+      "final": [
+        "O usuário mora em Curitiba"
+      ],
+      "decisions": [],
+      "seconds": 1.62
+    },
+    {
+      "case": "update-03",
+      "missing": [
+        "31"
+      ],
+      "present": [
+        "30 anos"
+      ],
+      "too_many": false,
+      "lost": [],
+      "final": [
+        "O usuário tem 30 anos"
+      ],
+      "decisions": [],
+      "seconds": 1.62
+    },
+    {
+      "case": "update-04",
+      "missing": [
+        "ana"
+      ],
+      "present": [
+        "chefe"
+      ],
+      "too_many": false,
+      "lost": [],
+      "final": [
+        "O usuário quer ser chamado de chefe"
+      ],
+      "decisions": [],
+      "seconds": 1.48
+    },
+    {
+      "case": "update-05",
+      "missing": [
+        "livraria"
+      ],
+      "present": [
+        "padaria"
+      ],
+      "too_many": false,
+      "lost": [],
+      "final": [
+        "O usuário trabalha na Padaria Exemplo"
+      ],
+      "decisions": [],
+      "seconds": 1.63
+    },
+    {
+      "case": "update-07",
+      "missing": [
+        "curt"
+      ],
+      "present": [
+        "longas"
+      ],
+      "too_many": false,
+      "lost": [],
+      "final": [
+        "O usuário prefere respostas longas"
+      ],
+      "decisions": [],
+      "seconds": 1.68
+    },
+    {
+      "case": "update-08",
+      "missing": [
+        "azul"
+      ],
+      "present": [
+        "prata"
+      ],
+      "too_many": false,
+      "lost": [],
+      "final": [
+        "O usuário dirige um carro prata"
+      ],
+      "decisions": [],
+      "seconds": 1.76
+    },
+    {
+      "case": "update-09",
+      "missing": [
+        "direito"
+      ],
+      "present": [
+        "engenharia"
+      ],
+      "too_many": false,
+      "lost": [],
+      "final": [
+        "O usuário estuda engenharia"
+      ],
+      "decisions": [],
+      "seconds": 1.82
+    },
+    {
+      "case": "update-10",
+      "missing": [
+        "cas"
+      ],
+      "present": [
+        "solteir"
+      ],
+      "too_many": false,
+      "lost": [],
+      "final": [
+        "O usuário é solteiro"
+      ],
+      "decisions": [],
+      "seconds": 1.68
+    },
+    {
+      "case": "update-12",
+      "missing": [
+        "8h"
+      ],
+      "present": [
+        "6h"
+      ],
+      "too_many": false,
+      "lost": [],
+      "final": [
+        "O usuário acorda às 6h"
+      ],
+      "decisions": [],
+      "seconds": 1.62
+    },
+    {
+      "case": "delete-02",
+      "missing": [],
+      "present": [
+        "gosta de cafe"
+      ],
+      "too_many": false,
+      "lost": [],
+      "final": [
+        "O usuário gosta de café"
+      ],
+      "decisions": [],
+      "seconds": 1.65
+    },
+    {
+      "case": "delete-03",
+      "missing": [],
+      "present": [
+        "tem uma moto"
+      ],
+      "too_many": false,
+      "lost": [],
+      "final": [
+        "O usuário tem uma moto"
+      ],
+      "decisions": [],
+      "seconds": 1.6
+    },
+    {
+      "case": "long-01",
+      "missing": [
+        "caio"
+      ],
+      "present": [],
+      "too_many": false,
+      "lost": [],
+      "final": [
+        "O usuário quer organizar sua semana",
+        "O usuário pratica pilates às terças",
+        "O usuário cuida do seu filho Davi à tarde",
+        "O usuário dá aula de manhã",
+        "O usuário é professora"
+      ],
+      "decisions": [
+        {
+          "event": "add",
+          "memory_id": "72c44ea0-d40b-4ec7-b285-cbd2d7b2b3a4",
+          "text": "O usuário é professora",
+          "previous_text": null,
+          "topic": "estudos",
+          "reason": null
+        },
+        {
+          "event": "add",
+          "memory_id": "1bf7277d-014a-44af-b4ae-bee20750b182",
+          "text": "O usuário dá aula de manhã",
+          "previous_text": null,
+          "topic": "trabalho",
+          "reason": null
+        },
+        {
+          "event": "add",
+          "memory_id": "3495b280-9595-4ced-bc23-f94871f6a84f",
+          "text": "O usuário cuida do seu filho Davi à tarde",
+          "previous_text": null,
+          "topic": "família",
+          "reason": null
+        },
+        {
+          "event": "add",
+          "memory_id": "28cc4d73-85a5-4c83-a0ea-a338fe72ea94",
+          "text": "O usuário pratica pilates às terças",
+          "previous_text": null,
+          "topic": "lazer",
+          "reason": null
+        },
+        {
+          "event": "add",
+          "memory_id": "fc6437a9-63d4-482b-859a-2b8ebb0c555c",
+          "text": "O usuário quer organizar sua semana",
+          "previous_text": null,
+          "topic": "rotina",
+          "reason": null
+        }
+      ],
+      "seconds": 13.89
+    }
+  ],
+  "summary": {
+    "cases": 56,
+    "passed": 36,
+    "accuracy": 0.6429,
+    "wrongful_deletions": 0
+  },
+  "date": "2026-11-04",
+  "pi_memory": "0.1.0",
+  "machine": {
+    "os": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.10",
+    "cpu": "AMD64 Family 25 Model 33 Stepping 2, AuthenticAMD"
+  },
+  "packages": {
+    "fastembed": "0.9.1",
+    "qdrant-client": "1.20.0",
+    "httpx": "0.28.1",
+    "pypdf": "6.21.4"
+  }
+}

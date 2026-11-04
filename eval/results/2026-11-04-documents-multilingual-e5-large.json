@@ -1,0 +1,122 @@
+{
+  "suite": "documents",
+  "stores": {
+    "memory": {
+      "top3": "49/52",
+      "top3_rate": 0.9423,
+      "citation_correct_of_hits": "49/49",
+      "exact_first": "12/12",
+      "exact_first_rate": 1.0,
+      "index_seconds": 1.8,
+      "search_p50_ms": 42.6,
+      "search_p95_ms": 47.5
+    },
+    "qdrant-local": {
+      "top3": "50/52",
+      "top3_rate": 0.9615,
+      "citation_correct_of_hits": "50/50",
+      "exact_first": "11/12",
+      "exact_first_rate": 0.9167,
+      "index_seconds": 4.4,
+      "search_p50_ms": 42.6,
+      "search_p95_ms": 45.9
+    }
+  },
+  "questions": 52,
+  "exact_terms": 12,
+  "seconds_total": 11.6,
+  "engines": {
+    "embedder": "fastembed:intfloat/multilingual-e5-large"
+  },
+  "failures": [
+    {
+      "store": "memory",
+      "case": "doc-02",
+      "question": "Qual é o objeto do contrato?",
+      "wanted": "contrato_exemplo.pdf, página 2",
+      "got": [
+        "relatorio.docx, trecho 1",
+        "contrato_exemplo.pdf, página 20",
+        "contrato_exemplo.pdf, página 1"
+      ]
+    },
+    {
+      "store": "memory",
+      "case": "doc-09",
+      "question": "Como é corrigido o valor do contrato a cada ano?",
+      "wanted": "contrato_exemplo.pdf, página 9",
+      "got": [
+        "apresentacao.pptx, slide 3",
+        "contrato_exemplo.pdf, página 7",
+        "contrato_exemplo.pdf, página 15"
+      ]
+    },
+    {
+      "store": "memory",
+      "case": "doc-14",
+      "question": "Como funciona o cancelamento do contrato?",
+      "wanted": "contrato_exemplo.pdf, página 14",
+      "got": [
+        "contrato_exemplo.pdf, página 20",
+        "contrato_exemplo.pdf, página 17",
+        "contrato_exemplo.pdf, página 1"
+      ]
+    },
+    {
+      "store": "qdrant-local",
+      "case": "doc-02",
+      "question": "Qual é o objeto do contrato?",
+      "wanted": "contrato_exemplo.pdf, página 2",
+      "got": [
+        "relatorio.docx, trecho 1",
+        "contrato_exemplo.pdf, página 1",
+        "contrato_exemplo.pdf, página 6"
+      ]
+    },
+    {
+      "store": "qdrant-local",
+      "case": "doc-09",
+      "question": "Como é corrigido o valor do contrato a cada ano?",
+      "wanted": "contrato_exemplo.pdf, página 9",
+      "got": [
+        "apresentacao.pptx, slide 3",
+        "contrato_exemplo.pdf, página 7",
+        "relatorio.docx, trecho 1"
+      ]
+    },
+    {
+      "store": "qdrant-local",
+      "case": "term-03",
+      "term": "nota fiscal NF-4521",
+      "wanted": "contrato_exemplo.pdf, página 7",
+      "got": [
+        "vendas.xlsx, aba Vendas, linhas 1–5",
+        "contrato_exemplo.pdf, página 7",
+        "contrato_exemplo.pdf, página 15"
+      ]
+    }
+  ],
+  "summary": {
+    "memory": {
+      "top3": "49/52",
+      "exact_first": "12/12"
+    },
+    "qdrant-local": {
+      "top3": "50/52",
+      "exact_first": "11/12"
+    }
+  },
+  "date": "2026-11-04",
+  "pi_memory": "0.1.0",
+  "machine": {
+    "os": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.10",
+    "cpu": "AMD64 Family 25 Model 33 Stepping 2, AuthenticAMD"
+  },
+  "packages": {
+    "fastembed": "0.9.1",
+    "qdrant-client": "1.20.0",
+    "httpx": "0.28.1",
+    "pypdf": "6.21.4"
+  }
+}

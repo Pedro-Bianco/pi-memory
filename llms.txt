@@ -1,0 +1,66 @@
+# pi-memory
+
+> Biblioteca Python de memória para assistentes e agentes de IA, em português do Brasil:
+> memória de longo prazo (extrai fatos de conversas e decide guardar, substituir, apagar ou
+> ignorar), base de documentos com busca híbrida (significado + palavra exata) e citação da
+> origem, e grafo das memórias por assunto. Local por padrão (FastEmbed + Ollama + Qdrant);
+> embedding, modelo de linguagem, banco vetorial, leitores, divisão em trechos, prompts e grafo
+> são trocáveis. Linha de comando, servidor HTTP (com administração local em
+> http://127.0.0.1:8765/) e servidor MCP expõem as mesmas operações com o mesmo JSON. Licença MIT.
+> Versão 0.1.0.
+
+Pontos essenciais para usar corretamente:
+
+- Tudo parte de `PiMemory(...)`; toda operação recebe `owner` (dados de um dono nunca aparecem
+  para outro). Retornos são dicts JSON simples.
+- `pm.memories.add(conversa, owner)` devolve `{"decisions": [...]}` com `event` em
+  `add | update | delete | none`; na dúvida guarda, nunca apaga por palpite.
+- `pm.documents.search(...)` devolve trechos com `citation.label` ("arquivo.pdf, página 12").
+- Use as 3 primeiras memórias da busca como contexto, não só a primeira.
+- Modelos de nuvem não têm modelo padrão: passe o nome (`GeminiLLM("gemini-3.5-flash")`).
+- Chaves só por parâmetro ou variável de ambiente (`OPENAI_API_KEY`, `GEMINI_API_KEY`,
+  `ANTHROPIC_API_KEY`), nunca no arquivo de configuração.
+- Trocar de embedding numa memória existente dá `EmbedderMismatchError`: abra com o modelo
+  antigo e chame `pm.reindex(novo_embedder)`.
+- Documentos ficam em coleções (padrão `geral`): `pm.documents.collections`, `delete_collection`,
+  `get`, `add_text`, `chunks`, `delete_chunk`; `pm.stats(owner)` dá a visão geral.
+- Com asyncio: `AsyncPiMemory` (mesma API com `await`). Servidor HTTP com `--token` exige
+  `Authorization: Bearer <token>`; esse token é único e libera todos os donos: o pi-memory não
+  autentica usuários, quem escolhe o `owner` é o sistema que o usa.
+- HTTP exige `Content-Type: application/json`; sem token, só `Host` local. Pelo HTTP e MCP,
+  `documents.add` usa `filename` + `content_base64`; `path` só dentro de `--docs-dir`.
+- Linha de comando para agentes: `pi-memory schema [operação]` dá o esquema JSON com a descrição
+  de cada campo; `--params '<json>'` aceita o mesmo JSON do HTTP/MCP; saída JSON e código de
+  saída por tipo de erro.
+- Operações por transporte: `pi-memory <grupo> <ação> --opções`, `POST /v1/<grupo>.<ação>`,
+  ferramenta MCP `<grupo>_<ação>`; esquemas em `src/pi_memory/schemas.json`.
+
+## Documentação
+
+- [Guia completo](docs/GUIA.md): problema, conceitos, arquitetura, como a memória decide,
+  documentos, busca híbrida, grafo, instalação, receitas, referência da API, formatos JSON,
+  motores, peças próprias, qualidade medida, privacidade, limites, FAQ, estado do projeto
+- [README](README.md): visão geral, instalação e resultados medidos (tabelas geradas de
+  eval/results)
+
+## Exemplos executados
+
+- [01 memória básica](examples/notebooks/01_memoria_basica.ipynb)
+- [02 documentos com citação](examples/notebooks/02_documentos.ipynb)
+- [03 agente real com memória (contexto, duas sessões)](examples/notebooks/03_agente_com_memoria.ipynb)
+- [04 agente com ferramentas de memória](examples/notebooks/04_agente_com_ferramentas.ipynb)
+- [05 trocar motores, configuração em JSON, reindexação](examples/notebooks/05_motores_e_configuracao.ipynb)
+- [06 grafo por assunto](examples/notebooks/06_grafo.ipynb)
+- [07 administração: coleções, trechos, linha de comando e HTTP](examples/notebooks/07_administracao.ipynb)
+
+## Código
+
+- [API pública](src/pi_memory/client.py), [memória](src/pi_memory/memories.py),
+  [documentos](src/pi_memory/documents.py), [busca híbrida](src/pi_memory/search.py),
+  [interfaces das peças](src/pi_memory/interfaces.py),
+  [números medidos](src/pi_memory/config.py), [prompts](src/pi_memory/prompts/portuguese.py)
+
+## Opcional
+
+- [Avaliação](eval/run.py) e [casos fictícios](eval/cases/)
+- [Testes de contrato dos bancos](tests/contract/test_store_contract.py)
