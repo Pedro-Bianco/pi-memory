@@ -1,8 +1,20 @@
 name: tests
 
+# Runs on pushes to main and on pull requests: a branch with an open pull request (Dependabot's,
+# for example) is tested once, not twice, and tags do not re-test a commit already tested.
 on:
   push:
+    branches: [main]
   pull_request:
+
+# A new commit on a pull request cancels the run still going for the old one; runs on main are
+# never cancelled, so every commit there gets a result.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
 
 jobs:
   tests:
@@ -17,6 +29,8 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: ${{ matrix.python }}
+          cache: pip
+          cache-dependency-path: pyproject.toml
       - name: Install
         run: python -m pip install -e ".[qdrant,pdf,chroma,mcp,dev]"
       - name: Lint
