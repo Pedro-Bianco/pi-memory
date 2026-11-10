@@ -1,8 +1,43 @@
-# pi-memory
+<div align="center">
+
+<h1>pi-memory</h1>
+
+<p><strong>Memória de longo prazo para agentes de IA</strong><br>
+aprende com a conversa, lembra na próxima sessão e cita de onde veio cada resposta</p>
 
 [![testes](https://github.com/Pedro-Bianco/pi-memory/actions/workflows/tests.yml/badge.svg)](https://github.com/Pedro-Bianco/pi-memory/actions/workflows/tests.yml)
+[![versão](https://img.shields.io/github/v/release/Pedro-Bianco/pi-memory?label=vers%C3%A3o)](https://github.com/Pedro-Bianco/pi-memory/releases)
 ![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)
-![licença MIT](https://img.shields.io/badge/licen%C3%A7a-MIT-green)
+[![licença MIT](https://img.shields.io/badge/licen%C3%A7a-MIT-green)](https://github.com/Pedro-Bianco/pi-memory/blob/main/LICENSE)
+![local por padrão](https://img.shields.io/badge/local-por%20padr%C3%A3o-8250df)
+
+<p>
+<a href="#instalação">Instalação</a> ·
+<a href="#uso">Uso</a> ·
+<a href="#linha-de-comando-servidores-e-administração">CLI, HTTP e MCP</a> ·
+<a href="#resultados-medidos">Resultados</a> ·
+<a href="https://github.com/Pedro-Bianco/pi-memory/blob/main/docs/GUIA.md">Guia completo</a> ·
+<a href="https://github.com/Pedro-Bianco/pi-memory/tree/main/examples/notebooks/">Notebooks</a>
+</p>
+
+<img src="https://raw.githubusercontent.com/Pedro-Bianco/pi-memory/main/docs/img/demo.gif" width="820" alt="Um agente aprende na sessão 1, lembra na sessão 2 com o histórico vazio e substitui a cidade quando a pessoa se muda; depois, a página de administração local com os mesmos dados">
+
+<sub>Execução real: Ollama <code>qwen2.5:14b</code> com os motores padrão; falas e decisões sem edição (as respostas do assistente na sessão 1 foram omitidas para caber).</sub>
+
+<br>
+
+<table>
+<tr>
+<td align="center"><b>93%</b><br><sub>decisões de memória certas<br>(54/58, <code>qwen2.5:14b</code>)</sub></td>
+<td align="center"><b>0</b><br><sub>memórias apagadas<br>por engano</sub></td>
+<td align="center"><b>96%</b><br><sub>trecho certo no top 3<br>com citação de página</sub></td>
+<td align="center"><b>Local</b><br><sub>sem chave e sem telemetria<br>na configuração padrão</sub></td>
+</tr>
+</table>
+
+<sub>Números de execuções registradas em <a href="https://github.com/Pedro-Bianco/pi-memory/tree/main/eval/results/"><code>eval/results/</code></a>, com dados fictícios.</sub>
+
+</div>
 
 > **In English.** pi-memory is a Python library that gives any AI assistant long-term memory: it
 > extracts facts from conversations and decides to add, update, delete or ignore each one
@@ -12,25 +47,11 @@
 > served as a library, CLI, HTTP server with a local admin page, and MCP server. Docs are in
 > Brazilian Portuguese.
 
-![Um agente aprende na sessão 1, lembra na sessão 2 com o histórico vazio e substitui a cidade
-quando a pessoa se muda; depois, a página de administração local com os mesmos dados](https://raw.githubusercontent.com/Pedro-Bianco/pi-memory/main/docs/img/demo.gif)
-
-*Execução real: Ollama `qwen2.5:14b` com os motores padrão; falas e decisões sem edição
-(as respostas do assistente na sessão 1 foram omitidas para caber).*
-
-Memória de longo prazo, base de documentos com busca híbrida e grafo de memória por assunto, para
-qualquer projeto Python. Local por padrão (FastEmbed + Ollama + Qdrant, sem chave e sem internet
-depois de baixar os modelos), com cada peça trocável.
-
-> **v0.1.0.** Memória de longo prazo, base de conhecimento com coleções, grafo, linha de
-> comando, servidor HTTP com página de administração local e servidor MCP. Os números abaixo são
-> de execuções registradas em `eval/results/`.
-
 ## Documentação
 
-- **[Guia completo](https://github.com/Pedro-Bianco/pi-memory/blob/main/docs/GUIA.md)**: o problema que o projeto resolve, conceitos, arquitetura,
-  como a memória decide, busca híbrida, referência da API, formatos JSON, motores, limites e
-  perguntas frequentes.
+- **[Guia completo](https://github.com/Pedro-Bianco/pi-memory/blob/main/docs/GUIA.md)**: o problema que o projeto resolve, conceitos,
+  arquitetura, como a memória decide, busca híbrida, referência da API, formatos JSON, motores,
+  limites e perguntas frequentes.
 - **[Notebooks executados](https://github.com/Pedro-Bianco/pi-memory/tree/main/examples/notebooks/)**: memória, documentos, um agente real com
   memória (duas sessões), um agente com ferramentas de memória, troca de motores, grafo e
   administração.
@@ -113,7 +134,7 @@ PI_MEMORY_TOKEN=... pi-memory --path dados serve-http   # exige Authorization: B
 pi-memory --path dados serve-mcp       # ferramentas para agentes compatíveis com MCP
 ```
 
-![Administração local: base de conhecimento](https://raw.githubusercontent.com/Pedro-Bianco/pi-memory/main/docs/img/admin-base-de-conhecimento.png)
+<p align="center"><img src="https://raw.githubusercontent.com/Pedro-Bianco/pi-memory/main/docs/img/admin-base-de-conhecimento.png" width="820" alt="Administração local: base de conhecimento"></p>
 
 Detalhes de cada comando, do HTTP e do MCP no [guia](https://github.com/Pedro-Bianco/pi-memory/blob/main/docs/GUIA.md#125-operações-linha-de-comando-http-e-mcp).
 
