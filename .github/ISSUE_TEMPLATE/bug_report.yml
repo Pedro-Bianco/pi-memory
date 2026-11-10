@@ -1,0 +1,51 @@
+name: Relatar um problema
+description: Algo não funciona como o guia descreve.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Obrigado por relatar! **Não inclua dados pessoais**: use exemplos fictícios
+        ("Ana Exemplo", "Cidade Exemplo"). Falha de segurança? Não abra issue: use a aba
+        **Security → Report a vulnerability**.
+  - type: textarea
+    id: what
+    attributes:
+      label: O que aconteceu
+      description: O que você fez, o que esperava e o que aconteceu.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Como reproduzir
+      description: O menor código ou comando que mostra o problema.
+      render: python
+    validations:
+      required: true
+  - type: textarea
+    id: error
+    attributes:
+      label: Mensagem de erro
+      description: 'O JSON {"error": ...} ou o traceback completo.'
+      render: text
+  - type: input
+    id: version
+    attributes:
+      label: Versão do pi-memory
+      placeholder: "pi-memory --version"
+    validations:
+      required: true
+  - type: input
+    id: engines
+    attributes:
+      label: Motores e banco
+      description: A linha "motores" de `pi-memory --format text stats --owner <dono>`.
+      placeholder: "fastembed:intfloat/multilingual-e5-large (1024 dim.), QdrantStore, qwen2.5:14b"
+  - type: input
+    id: system
+    attributes:
+      label: Sistema e Python
+      placeholder: "Windows 11, Python 3.12"
+    validations:
+      required: true

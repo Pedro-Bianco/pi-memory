@@ -1,6 +1,6 @@
 """Default prompts, in Brazilian Portuguese: extraction, topic and decision.
 
-They come from the original project, where they were measured; every change here must be checked
+They come from an earlier version, where they were measured; every change here must be checked
 with eval/run.py --suite memory before and after. Example names are clearly
 fictitious so the model never copies a real-looking fact. Parsers are tolerant: they look for the
 word, not for JSON — requiring a JSON key once made every decision fall into ADD (measured 0/3).

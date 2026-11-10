@@ -280,7 +280,8 @@ Na avaliação registrada, **nenhum modelo apagou uma memória correta** (seçã
 
 ### 6.5 Por que sempre as 3 mais parecidas
 
-O projeto de origem só consultava o modelo quando a similaridade estava entre 0,72 e 0,89. Esse
+Uma versão anterior deste código só consultava o modelo quando a similaridade estava entre 0,72 e
+0,89. Esse
 número só vale para o modelo de embedding medido (e5); como aqui o embedding é trocável, a
 decisão sempre recebe as 3 mais parecidas. Custa uma chamada por fato quando há candidatas.
 
@@ -315,7 +316,7 @@ Extensão desconhecida → `UnsupportedFormatError` com a lista aceita e como pl
 
 Padrão: **8 frases por trecho, 1 compartilhada com o próximo**, sem atravessar seções (a citação
 continua exata). Quebra de linha também encerra frase, então linhas de planilha e listas ficam
-inteiras. Medido no projeto de origem: com 2 frases compartilhadas, um PDF de 100 páginas levava
+inteiras. Em medição anterior (não reproduzida em `eval/`): com 2 frases compartilhadas, um PDF de 100 páginas levava
 129 s em vez de 105 s, com o mesmo resultado de busca.
 
 ### 7.3 Identidade e versões
@@ -371,7 +372,7 @@ documento, e um documento sem trechos deixa de existir.
 Cada lista é normalizada pela própria distribuição (média ± 3 desvios-padrão, cortada em 0..1)
 e as notas de cada item são somadas. Por que DBSF e não RRF: o RRF só olha posições e perdeu
 "contrato 2024-0815" para "2024-0816" (empatados em significado); o DBSF preserva a margem da
-palavra exata e acertou os quatro casos de teste do projeto de origem.
+palavra exata e acertou os quatro casos de uma medição anterior (não reproduzida em `eval/`).
 
 ### 8.3 Nativa quando existe, da biblioteca quando não
 
@@ -423,8 +424,6 @@ Linha de comando: `pi-memory --path <pasta> graph html --owner ana --out grafo.h
 Requisitos: Python 3.10+, Windows, Linux ou macOS.
 
 ```bash
-pip install "pi-memory[local]"
-# versão em desenvolvimento, direto do GitHub:
 pip install "pi-memory[local] @ git+https://github.com/Pedro-Bianco/pi-memory"
 ```
 
@@ -439,7 +438,7 @@ pip install "pi-memory[local] @ git+https://github.com/Pedro-Bianco/pi-memory"
 | `dev` | `pytest`, `ruff` | desenvolver |
 
 Faltou um extra? A biblioteca diz exatamente o comando:
-`MissingExtraError: O banco Qdrant precisa do extra opcional 'qdrant'. Instale com: pip install "pi-memory[qdrant]"`.
+`MissingExtraError: O banco Qdrant precisa do extra opcional 'qdrant'. Instale com: pip install "pi-memory[qdrant] @ git+https://github.com/Pedro-Bianco/pi-memory"`.
 
 Modelos locais:
 
@@ -1092,7 +1091,7 @@ Metas: ≥ 90% e ≥ 95%. As falhas e os ajustes feitos com medição antes/depo
 - **Chroma em coleções grandes**: o `ChromaStore` lê em páginas de 500 registros; ler tudo de
   uma vez falhava com "too many SQL variables" a partir de 10 mil registros.
 - **Indexação**: dominada pelo embedding. FastEmbed e5-large em CPU ≈ 0,19–0,27 s por trecho
-  (projeto de origem); um PDF de 100 páginas ≈ 105 s.
+  (medição anterior, não reproduzida em `eval/`); um PDF de 100 páginas ≈ 105 s.
 - **`memories.add`**: 1 chamada de extração + 1 de assunto + 1 de decisão por fato que tem
   memórias parecidas. Com `qwen2.5:14b` local: mediana 6,7 s por conversa.
 - **Um processo por pasta** no Qdrant local (`StoreBusyError` no segundo).

@@ -68,7 +68,7 @@ Requer Python 3.10+ (Windows, Linux ou macOS) e, para a configuração padrão, 
 [Ollama](https://ollama.com) aberto com um modelo baixado.
 
 ```bash
-pip install "pi-memory[local]"
+pip install "pi-memory[local] @ git+https://github.com/Pedro-Bianco/pi-memory"
 ollama pull qwen2.5:14b
 ```
 
@@ -313,8 +313,9 @@ Arquivo: `2026-11-04-speed-multilingual-e5-large.json`. Máquina: Windows-11-10.
 | Regra do termo exato: “o 1º resultado contém o termo”, porque `NF-4521` existe em dois documentos e a regra antiga exigia um deles | banco em memória 11/12 | 12/12 |
 
 Os valores de partida (modelo e5, 8 frases por trecho com 1 de sobreposição, fusão DBSF, lista
-fixa de assuntos) vêm de medições anteriores feitas no projeto de origem e estão anotados no
-código, em `src/pi_memory/config.py`.
+fixa de assuntos) vêm de medições do autor anteriores a esta biblioteca, **não reproduzidas em
+`eval/`**; cada uma está anotada com a data no código (`src/pi_memory/config.py`). Os números
+que este README afirma são só os de `eval/results/`.
 
 ## Licença
 

@@ -1,7 +1,7 @@
 """Long-term memory: facts extracted from conversations and kept up to date.
 
 add(): extraction → topic → decision per fact (docs/GUIA.md, section 6). Always the 3 most
-similar memories of the same owner go to the model: the "update zone" of the original project
+similar memories of the same owner go to the model: the "update zone" of an earlier version
 (similarity 0.72-0.89) was measured for e5 only, and the embedder here is swappable. In doubt
 the fact is stored and nothing is deleted; an engine failure during extraction raises before
 anything is written.

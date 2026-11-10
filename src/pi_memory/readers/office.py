@@ -1,5 +1,5 @@
 """Word (.docx), PowerPoint (.pptx) and Excel (.xlsx) read straight from their zip packages of XML:
-only the text is needed, so the standard library avoids three dependencies (the original project did
+only the text is needed, so the standard library avoids three dependencies (an earlier version did
 the same)."""
 
 from __future__ import annotations

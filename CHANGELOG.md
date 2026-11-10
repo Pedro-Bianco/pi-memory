@@ -4,7 +4,9 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/); 
 [Versionamento Semântico](https://semver.org/lang/pt-BR/): mudança incompatível na API pública
 exige nova versão MAJOR e nota de migração.
 
-## [0.1.0] - 2026-11-05
+## [Não lançado]
+
+## [0.1.0] - 2026-11-10
 
 Primeira versão pública.
 
@@ -34,8 +36,8 @@ Primeira versão pública.
 - **Separação por dono testada**: `tests/contract/test_isolation.py` ataca as 22 operações a
   partir de outro dono, pela biblioteca, HTTP, MCP e linha de comando, nos três bancos.
 - Guia completo (`docs/GUIA.md`), 7 notebooks executados e `llms.txt`.
-- Pacote no PyPI (`pip install "pi-memory[local]"`), publicado pela CI com trusted publishing
-  a cada release do GitHub.
+- Pacotes (wheel e código-fonte) anexados a cada release do GitHub pela CI; instalação direto
+  do repositório (`pip install "pi-memory[local] @ git+https://github.com/Pedro-Bianco/pi-memory"`).
 
 ### Limitações conhecidas
 
@@ -45,3 +47,6 @@ Primeira versão pública.
   aviso, em vez de falhar. Busca e listas não leem vetores e não são afetadas.
 - Sem OCR; sem .doc, .xls, .ppt nem imagens.
 - Prompts e avaliação só em português.
+
+[Não lançado]: https://github.com/Pedro-Bianco/pi-memory/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/Pedro-Bianco/pi-memory/releases/tag/v0.1.0

@@ -59,12 +59,15 @@ class UnreadableDocumentError(PiMemoryError):
     code = "unreadable_document"
 
 
+REPO_URL = "git+https://github.com/Pedro-Bianco/pi-memory"
+
+
 class MissingExtraError(PiMemoryError):
     code = "missing_extra"
 
     def __init__(self, extra: str, what: str):
         super().__init__(
             f"{what} precisa do extra opcional '{extra}'. Instale com: "
-            f'pip install "pi-memory[{extra}]"'
+            f'pip install "pi-memory[{extra}] @ {REPO_URL}"'
         )
         self.extra = extra

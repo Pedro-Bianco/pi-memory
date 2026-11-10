@@ -1,9 +1,9 @@
 """Hybrid search: meaning (dense vectors) + exact word, fused with DBSF.
 
 Exact word: the dense vector ties on codes — "2024-0815" and "2024-0816" scored 0.859 both — while
-a term vector separates them (original project, 2026-11-01). Fusion: RRF only looks at
+a term vector separates them (earlier measurement, 2026-11-01). Fusion: RRF only looks at
 positions and lost "contrato 2024-0815" to "2024-0816"; DBSF keeps the margin of the word match
-and got all four test questions first (original project, 2026-11-01). Stores with native hybrid
+and got all four test questions first (earlier measurement, 2026-11-01). Stores with native hybrid
 search (Qdrant) do it themselves with the same terms; for the others the library keeps a BM25
 index in memory and fuses with the same DBSF formula, so results have the same shape everywhere.
 """

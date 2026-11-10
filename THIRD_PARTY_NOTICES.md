@@ -34,6 +34,12 @@ contrata e fica sob os termos deles.
 | Ollama | motor local | MIT |
 | API do Gemini, API da OpenAI, API da Anthropic | motores opcionais de nuvem | termos de uso de cada provedor |
 
+## Textos
+
+O `CODE_OF_CONDUCT.md` é a tradução oficial em português do
+[Contributor Covenant](https://www.contributor-covenant.org) 2.1, sob a licença
+[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), com o método de contato preenchido.
+
 ## Dados
 
 Todos os documentos, conversas e nomes usados em testes, avaliação (`eval/`) e exemplos

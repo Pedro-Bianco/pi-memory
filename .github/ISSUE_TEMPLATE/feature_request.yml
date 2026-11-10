@@ -1,0 +1,29 @@
+name: Sugerir uma melhoria
+description: Um motor, banco, leitor ou recurso novo.
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Qual problema isso resolve
+      description: O caso de uso real, com exemplo fictício.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposta
+      description: Como você imagina a API ou o comando.
+    validations:
+      required: true
+  - type: textarea
+    id: measure
+    attributes:
+      label: Como medir
+      description: |
+        O projeto só afirma o que mede. Se a mudança afeta qualidade ou velocidade, como saber se
+        ficou melhor? (ex.: casos novos em eval/cases/)
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternativas consideradas

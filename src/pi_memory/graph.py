@@ -3,7 +3,7 @@ the most similar memory of the same topic (a pair only once), using the vectors 
 
 Memories gather around their topic instead of by vector alone: every memory starts with
 "O usuário", and on 30 memories in 4 topics only 43-49% of nearest-neighbour links stayed inside
-a topic (original project, 2026-10-31).
+a topic (earlier measurement, 2026-10-31).
 """
 
 from __future__ import annotations

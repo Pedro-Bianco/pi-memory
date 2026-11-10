@@ -39,7 +39,7 @@ def pasta_limpa(nome):
 
 INSTALL = md('''> **Instalação** (uma vez):
 > ```bash
-> pip install "pi-memory[local]"
+> pip install "pi-memory[local] @ git+https://github.com/Pedro-Bianco/pi-memory"
 > ollama pull qwen2.5:14b
 > ```
 > Todos os dados deste notebook são fictícios. As saídas abaixo vêm de uma execução real.''')

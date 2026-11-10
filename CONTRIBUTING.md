@@ -1,6 +1,7 @@
 # Como contribuir
 
-Obrigado pelo interesse! Issues e pull requests são bem-vindos, em português.
+Obrigado pelo interesse! Issues e pull requests são bem-vindos, em português. Ao participar,
+você concorda com o [Código de Conduta](CODE_OF_CONDUCT.md).
 
 ## Preparar o ambiente
 
@@ -51,5 +52,5 @@ dependência como extra opcional no `pyproject.toml`, e:
 
 ## Relatar problemas
 
-Abra uma issue com o que você fez, o que esperava e o que aconteceu (com a mensagem de erro). Não
-inclua dados pessoais. Falhas de segurança: veja `SECURITY.md`.
+Abra uma issue pelo formulário (problema ou melhoria), com o que você fez, o que esperava e o
+que aconteceu. Não inclua dados pessoais. Falhas de segurança: veja `SECURITY.md`.

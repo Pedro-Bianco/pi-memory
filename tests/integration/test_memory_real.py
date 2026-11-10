@@ -21,7 +21,7 @@ def test_move_replaces_city(tmp_path):
         texts = [m["text"].casefold() for m in pm.memories.list(owner="ana")["memories"]]
         assert any("recife" in t for t in texts)
         assert not any("curitiba" in t for t in texts)
-        # Recall is "the 3 closest" (as in the original project): with two memories, "Ana" in the
+        # Recall is "the 3 closest" (as measured earlier): with two memories, "Ana" in the
         # question matched the name memory by exact word and came first on 2026-11-04.
         found = pm.memories.search("onde a Ana mora?", owner="ana")["results"]
         assert any("recife" in r["text"].casefold() for r in found)

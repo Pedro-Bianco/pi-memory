@@ -1,4 +1,4 @@
-"""PDF with pypdf (0.65 s for 100 pages, original project, 2026-11-01). Scanned PDFs (images
+"""PDF with pypdf (0.65 s for 100 pages, earlier measurement, 2026-11-01). Scanned PDFs (images
 only) have no text: OCR is out of this version and could come as a custom reader."""
 
 from __future__ import annotations
