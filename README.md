@@ -1,6 +1,6 @@
 <div align="center">
 
-<h1>pi-memory</h1>
+<h1>PI memory</h1>
 
 <p><strong>Memória de longo prazo para agentes de IA</strong><br>
 aprende com a conversa, lembra na próxima sessão e cita de onde veio cada resposta</p>
