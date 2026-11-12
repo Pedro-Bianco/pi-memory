@@ -17,7 +17,8 @@ aprende com a conversa, lembra na próxima sessão e cita de onde veio cada resp
 <a href="#linha-de-comando-servidores-e-administração">CLI, HTTP e MCP</a> ·
 <a href="#resultados-medidos">Resultados</a> ·
 <a href="https://github.com/Pedro-Bianco/pi-memory/blob/main/docs/GUIA.md">Guia completo</a> ·
-<a href="https://github.com/Pedro-Bianco/pi-memory/tree/main/examples/notebooks/">Notebooks</a>
+<a href="https://github.com/Pedro-Bianco/pi-memory/tree/main/examples/notebooks/">Notebooks</a> ·
+<a href="https://colab.research.google.com/drive/1dFl--nJ18cZgKjCwDd_o35975HV8TaMW">Testar no Colab</a>
 </p>
 
 <img src="https://raw.githubusercontent.com/Pedro-Bianco/pi-memory/main/docs/img/demo.gif" width="820" alt="Um agente aprende na sessão 1, lembra na sessão 2 com o histórico vazio e substitui a cidade quando a pessoa se muda; depois, a página de administração local com os mesmos dados">
@@ -55,6 +56,9 @@ aprende com a conversa, lembra na próxima sessão e cita de onde veio cada resp
 - **[Notebooks executados](https://github.com/Pedro-Bianco/pi-memory/tree/main/examples/notebooks/)**: memória, documentos, um agente real com
   memória (duas sessões), um agente com ferramentas de memória, troca de motores, grafo e
   administração.
+- **[Testar no Google Colab](https://colab.research.google.com/drive/1dFl--nJ18cZgKjCwDd_o35975HV8TaMW)**: um tour que roda inteiro no
+  navegador, sem instalar nada (memória, documentos, um assistente que lembra e o grafo). Para
+  executar, escolha a GPU T4; para guardar alterações, use *Arquivo → Salvar uma cópia no Drive*.
 - **[llms.txt](https://github.com/Pedro-Bianco/pi-memory/blob/main/llms.txt)**: índice curto para modelos de linguagem e agentes de código.
 
 ## O que faz
